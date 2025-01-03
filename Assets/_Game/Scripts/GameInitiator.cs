@@ -8,19 +8,17 @@ using PathfindingGrid = A_Pathfinding.Nodes.PathfindingGrid;
 public class GameInitiator : MonoBehaviour
 {
     [Header("Bindings")]
-    public PathfindingGrid grid;
     public GridManager gridManager;
     public PointClick pointClick;
-    public Pathfinding pathfinding;
+    public PathfindingDirector pathfindingDirector;
     [Header("Bindings Prefab")]
-    [SerializeField] private PathfindingGrid gridPrefab;
     [SerializeField] private GridManager gridManagerPrefab;
     [SerializeField] private PointClick pointClickPrefab;
-    [SerializeField] private Pathfinding pathfindingPrefab;
-    [Header("Settings")]
+       [Header("Settings")]
     [Header("Grid")]
     public Vector2Int gridWorldSize;
     public float nodeRadius;
+    public LayerMask unwalkableLayerMask;
 
     public static GameInitiator Instance { get; private set; }
 
@@ -37,17 +35,16 @@ public class GameInitiator : MonoBehaviour
     private void BindObjects()
     {
         gridManager = Instantiate(gridManagerPrefab, transform);
-        grid = Instantiate(gridPrefab, transform);
         pointClick = Instantiate(pointClickPrefab, transform);
-        pathfinding = Instantiate(pathfindingPrefab, transform);
     }
     // Initialize 
     private void Initialize()
     {
+        pathfindingDirector = new PathfindingDirector().InitializePathfinding(gridWorldSize, nodeRadius / 2, unwalkableLayerMask);
         gridManager.Init(gridWorldSize, nodeRadius);
-        grid.Init(gridWorldSize, nodeRadius/2);
+    //    grid.Init(gridWorldSize, nodeRadius/2);
         pointClick.Init(gridWorldSize, nodeRadius);
-        pathfinding.Init(grid);
+    //    pathfinding.Init(grid);
     }
 
     //Prepare

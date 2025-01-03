@@ -15,7 +15,7 @@ namespace A_Pathfinding.Pathfinding
         void Awake()
         {
             instance = this;
-            pathfinding = GetComponent<Pathfinding>();
+            // pathfinding = GetComponent<Pathfinding>();
         }
 
         void Update()
@@ -52,6 +52,18 @@ namespace A_Pathfinding.Pathfinding
         }
 
 
+        #region Builder
+        public class Builder
+        {   
+            public PathRequestManager Build(Pathfinding pathfinding)
+            {
+                PathRequestManager manager = new GameObject("PathRequestManager").AddComponent<PathRequestManager>();
+                manager.pathfinding = pathfinding;
+                return manager;
+            }
+        }
+
+        #endregion
     }
     public struct PathResult
     {
@@ -82,4 +94,5 @@ namespace A_Pathfinding.Pathfinding
         }
 
     }
+
 }

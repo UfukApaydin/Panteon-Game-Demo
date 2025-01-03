@@ -9,14 +9,10 @@ namespace A_Pathfinding.Test
         // Start is called once before the first execution of Update after the MonoBehaviour is created
         void Start()
         {
-            PathfindingGrid grid = FindAnyObjectByType<PathfindingGrid>();
-            grid.UpdateNodesWalkable(transform.position, 2, false);
+
+            GameInitiator.Instance.pathfindingDirector.grid.UpdateNodesWalkable(transform.position, 2, false);
         }
 
-        // Update is called once per frame
-        void Update()
-        {
-
-        }
+       
     }
 }

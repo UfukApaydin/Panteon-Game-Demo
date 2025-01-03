@@ -9,16 +9,14 @@ using PathfindingGrid = A_Pathfinding.Nodes.PathfindingGrid;
 
 namespace A_Pathfinding.Pathfinding
 {
-    public class Pathfinding : MonoBehaviour
+    public class Pathfinding 
     {
         PathfindingGrid grid;
 
-        public void Init(PathfindingGrid grid)
+        public Pathfinding (PathfindingGrid grid)
         {
             this.grid = grid;
         }
-
-
         public void FindPath(PathRequest request, Action<PathResult> callback)
         {
 
