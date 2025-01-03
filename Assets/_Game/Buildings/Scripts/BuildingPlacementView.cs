@@ -7,9 +7,14 @@ public class BuildingPlacementView : MonoBehaviour
     public Transform buttonContainer;
     public GameObject buttonPrefab;
 
-    public void CreateBuildingButtons(BuildingConfig[] buildings)
+    public void Initialize(BuildingPlacementController buildingController,BuildingData[] buildings)
     {
-        foreach (BuildingConfig building in buildings)
+        this.buildingController = buildingController;
+        CreateBuildingButtons(buildings);
+    }
+    public void CreateBuildingButtons(BuildingData[] buildings)
+    {
+        foreach (BuildingData building in buildings)
         {
             GameObject buttonInstance = Instantiate(buttonPrefab, buttonContainer);
         //    buttonInstance.GetComponent<Image>().sprite = building.icon;
@@ -18,3 +23,4 @@ public class BuildingPlacementView : MonoBehaviour
         }
     }
 }
+ 

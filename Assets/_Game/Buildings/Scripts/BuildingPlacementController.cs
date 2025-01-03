@@ -1,36 +1,48 @@
+using System;
 using UnityEngine;
 
 public class BuildingPlacementController : MonoBehaviour
 {
     public BuildingPlacementView placementView;
     public BuildingPlacementModel placementModel;
+
     public LayerMask groundLayer;
-    private BuildingConfig selectedBuilding = null;
+
+    private BuildingData selectedBuilding = null;
     private GameObject previewInstance;
     private BuildingFactory buildingFactory;
-
-
     private Camera mainCamera;
+
+    //private BuildingPlacementController(BuildingPlacementView placementView, BuildingPlacementModel placementModel, LayerMask groundLayer)
+    //{
+    //    this.placementView = placementView;
+    //    this.placementModel = placementModel;
+    //    this.groundLayer = groundLayer;
+    //    mainCamera = Camera.main;
+    //    buildingFactory = new BuildingFactory();
+
+    //}
     private void Awake()
     {
         mainCamera = Camera.main;
-       buildingFactory = new BuildingFactory();
+        buildingFactory = new BuildingFactory();
     }
-    private void Start()
+
+    private void StartController()
     {
-        placementView.CreateBuildingButtons(placementModel.buildingConfigs.ToArray());
+        placementView.Initialize(this,placementModel.buildingConfigs.ToArray());
     }
 
 
-    public void SelectBuilding(BuildingConfig buildingData)
+    public void SelectBuilding(BuildingData buildingData)
     {
         selectedBuilding = buildingData;
-        //if (previewInstance != null)
-        //{
-        //    Destroy(previewInstance);
-        //}
-        //previewInstance = Instantiate(selectedBuilding.prefab);
-        //previewInstance.GetComponent<Collider>().enabled = false; // Disable collision for preview
+        if (previewInstance != null)
+        {
+            Destroy(previewInstance);
+        }
+        previewInstance = buildingFactory.CreatePreview(buildingData);
+
     }
 
     private void Update()
@@ -43,27 +55,74 @@ public class BuildingPlacementController : MonoBehaviour
 
     private void HandleBuildingPlacement()
     {
+
         Vector3 mouseWorldPos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
         Vector2 mouseWorldPos2D = new Vector2(mouseWorldPos.x, mouseWorldPos.y);
-        // Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
         RaycastHit2D hit = Physics2D.Raycast(mouseWorldPos2D, Vector2.zero, 0f, groundLayer);
         if (hit.collider != null)
         {
-           // previewInstance.transform.position = hit.point;
+            Vector3 snappedPosition = SnapToGrid(hit.point);
+            previewInstance.transform.position = snappedPosition;
+
+            // check if building can be placed;
 
             if (Input.GetMouseButtonDown(0)) // Left-click to place
             {
-                PlaceBuilding(hit.point);
+                PlaceBuilding(snappedPosition);
             }
         }
     }
 
     private void PlaceBuilding(Vector3 position)
     {
-        buildingFactory.Create(selectedBuilding);  // Need to move object after placement
-      //  Instantiate(selectedBuilding.prefab, position, Quaternion.identity);
-      //  Destroy(previewInstance);
+
+        buildingFactory.Create(selectedBuilding).Build(GameInitiator.Instance.gridManager.GetCellFromWorlPosition(position)); 
+
+        Destroy(previewInstance);                                                                                                                                                                                                       
         previewInstance = null;
         selectedBuilding = null;
     }
+    public Vector3 SnapToGrid(Vector3 position)
+    {
+        var pos = GameInitiator.Instance.gridManager.GetSnapPosition(position);  //----------------------Change This-------------------
+        return new Vector3(pos.x, pos.y, 0);
+
+    }
+    #region Builder
+    public class Builder
+    {
+        readonly BuildingPlacementModel model = new();
+        private bool isBuildingProvided = false;
+        public Builder WithBuildings(BuildingData[] buildings)
+        {
+            model.AddBuildingDataRange(buildings);
+            isBuildingProvided = true;
+            return this;
+        }
+        public BuildingPlacementController Build(BuildingPlacementView view, LayerMask groundLayerMask)
+        {
+            if (view != null)
+            {
+                if (isBuildingProvided)
+                    model.LoadBuildingAddressables();
+                var controller = new GameObject("BuildingPlacementController").AddComponent<BuildingPlacementController>();
+                controller.placementView = view;
+                controller.placementModel = model;
+                controller.groundLayer = groundLayerMask;
+                return controller;
+
+            }
+            else
+                throw new InvalidOperationException("Controller controller cannot be null");
+        }
+        public BuildingPlacementController BuildAndStart(BuildingPlacementView view, LayerMask groundLayerMask)
+        {
+            var controller = Build(view, groundLayerMask);
+            controller.StartController();
+            return controller;
+        }
+    }
+
+    #endregion
 }

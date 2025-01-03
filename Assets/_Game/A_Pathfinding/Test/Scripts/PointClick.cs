@@ -19,8 +19,8 @@ namespace A_Pathfinding.Test
         [SerializeField]private GameObject clickPointPrefab;
        
         // ------ Building Placement -----
-        public List<BuildingConfig> Buildings;
-        private BuildingConfig selectedBuildingPrefab;
+        public List<BuildingData> Buildings;
+        private BuildingData selectedBuildingPrefab;
         private int buildIndex = 0;
         private bool canBuild = false;
         private BuildingFactory buildingFactory;

@@ -14,7 +14,7 @@ namespace A_Pathfinding.Test
         public GameObject objectToPlace;
 
         private GameObject previewObject;
-        float cellSize => grid.nodeRadius;
+        float cellSize => GameInitiator.Instance.pathfindingDirector.grid.nodeRadius;
         public LayerMask groundLayer;
 
 

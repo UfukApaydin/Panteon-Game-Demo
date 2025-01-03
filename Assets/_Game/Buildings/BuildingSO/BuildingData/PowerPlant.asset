@@ -9,11 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 18cc4764b0ec8c041b1650d8a5b4da94, type: 3}
+  m_Script: {fileID: 11500000, guid: a8f89f12b94559446bf0fac95fafe010, type: 3}
   m_Name: PowerPlant
   m_EditorClassIdentifier: 
   prefab: {fileID: 1724068046380614960, guid: 8c02d50c3456a8b44a81389ae139cbbc, type: 3}
-  buildingName: Powerplant
-  icon: {fileID: 0}
+  buildingName: Power Plant
+  visual: {fileID: 7482667652216324306, guid: c9378740cc384af4780e9a76f94ab980, type: 3}
+  icon: {fileID: 7482667652216324306, guid: c9378740cc384af4780e9a76f94ab980, type: 3}
   maxHealth: 50
   size: {x: 2, y: 3}
+  placementConfig: {fileID: 11400000, guid: 2ff6b4e85cd9221458b295cebd8c6bd3, type: 2}

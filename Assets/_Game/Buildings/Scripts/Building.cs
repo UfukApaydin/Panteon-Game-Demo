@@ -3,11 +3,11 @@ using UnityEngine;
 
 public class Building : MonoBehaviour
 {
-    private BuildingConfig config;
+    private BuildingData config;
   
     private List<Vector2Int> cellPositions;
 
-    public void Init(BuildingConfig config)
+    public void Init(BuildingData config)
     {
         this.config = config;
     }
@@ -23,7 +23,7 @@ public class Building : MonoBehaviour
                 cellPositions.Add(new Vector2Int(cell.gridX + x, cell.gridY + y));   
             }
         }
-        GameInitiator.Instance.grid.UpdateNodesWalkableCell(cellPositions.ToArray(), false);
+        GameInitiator.Instance.pathfindingDirector.grid.UpdateNodesWalkableCell(cellPositions.ToArray(), false);
       
     }
 

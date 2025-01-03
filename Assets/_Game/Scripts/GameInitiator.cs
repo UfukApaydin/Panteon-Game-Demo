@@ -11,14 +11,23 @@ public class GameInitiator : MonoBehaviour
     public GridManager gridManager;
     public PointClick pointClick;
     public PathfindingDirector pathfindingDirector;
+    public BuildingPlacementController buildingPlacementController;
+
+    [Header("From Scene")]
+    public BuildingPlacementView buildingPlacementView;
+
     [Header("Bindings Prefab")]
     [SerializeField] private GridManager gridManagerPrefab;
     [SerializeField] private PointClick pointClickPrefab;
-       [Header("Settings")]
+
+    [Header("Settings")]
     [Header("Grid")]
     public Vector2Int gridWorldSize;
     public float nodeRadius;
     public LayerMask unwalkableLayerMask;
+    [Header("Buildings")]
+    public BuildingData[] buildingDatas;
+    public LayerMask groundLayerMask;
 
     public static GameInitiator Instance { get; private set; }
 
@@ -37,14 +46,16 @@ public class GameInitiator : MonoBehaviour
         gridManager = Instantiate(gridManagerPrefab, transform);
         pointClick = Instantiate(pointClickPrefab, transform);
     }
-    // Initialize 
+
     private void Initialize()
     {
-        pathfindingDirector = new PathfindingDirector().InitializePathfinding(gridWorldSize, nodeRadius / 2, unwalkableLayerMask);
+        pathfindingDirector = new PathfindingDirector()
+            .InitializePathfinding(gridWorldSize, nodeRadius / 2, unwalkableLayerMask);
         gridManager.Init(gridWorldSize, nodeRadius);
-    //    grid.Init(gridWorldSize, nodeRadius/2);
         pointClick.Init(gridWorldSize, nodeRadius);
-    //    pathfinding.Init(grid);
+        buildingPlacementController = new BuildingPlacementController.Builder()
+            .WithBuildings(buildingDatas)
+            .BuildAndStart(buildingPlacementView,groundLayerMask);
     }
 
     //Prepare

@@ -9,11 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 18cc4764b0ec8c041b1650d8a5b4da94, type: 3}
+  m_Script: {fileID: 11500000, guid: a8f89f12b94559446bf0fac95fafe010, type: 3}
   m_Name: Barracks
   m_EditorClassIdentifier: 
   prefab: {fileID: 1724068046380614960, guid: 4a1eb5022ebac05479090f5344dd9185, type: 3}
   buildingName: Barracks
-  icon: {fileID: 0}
+  visual: {fileID: 7482667652216324306, guid: 0b8fccab03fbb684ca5a4cd469715a53, type: 3}
+  icon: {fileID: 7482667652216324306, guid: 0b8fccab03fbb684ca5a4cd469715a53, type: 3}
   maxHealth: 100
   size: {x: 4, y: 4}
+  placementConfig: {fileID: 11400000, guid: 2ff6b4e85cd9221458b295cebd8c6bd3, type: 2}
