@@ -10,7 +10,7 @@ namespace SelectionSystem
         private List<ISelectable> _selectedObjects = new();
         private ISelectionStrategy _selectionStrategy;
 
-        [SerializeReference] private SelectionMarkerPool _selectionMarkerPool;
+        [SerializeReference] private PoolSystem _selectionMarkerPool;
         [SerializeField] private RectangleDrawer _rectangleDrawer;
 
         private void Start()
@@ -77,7 +77,7 @@ namespace SelectionSystem
 
             {
                 _selectedObjects.Add(selectable);
-                selectable.Select(_selectionMarkerPool.GetMarker());
+                selectable.Select(_selectionMarkerPool.GetMarker() as SelectionMarker);
             }
         }
 

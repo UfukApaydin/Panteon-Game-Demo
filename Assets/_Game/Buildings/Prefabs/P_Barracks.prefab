@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1393646192665282891}
   - component: {fileID: 1819719915867169810}
   - component: {fileID: 4783684831887479763}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: P_Barracks
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -107,6 +107,7 @@ MonoBehaviour:
   onDeselect:
     m_PersistentCalls:
       m_Calls: []
+  _isBuildingConstructed: 0
 --- !u!61 &4783684831887479763
 BoxCollider2D:
   m_ObjectHideFlags: 0

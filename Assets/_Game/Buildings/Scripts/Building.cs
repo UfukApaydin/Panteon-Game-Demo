@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using SelectionSystem;
 using SelectionSystem.Marker;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ public class Building : MonoBehaviour, ISelectable
     private List<Vector2Int> _cellPositions;
     private SelectionMarker _marker;
 
+    [SerializeField] private bool _isBuildingConstructed = false; 
     public void Init(BuildingData config)
     {
         _config = config;
@@ -21,7 +23,27 @@ public class Building : MonoBehaviour, ISelectable
     public void Build(Cell cell)
     {
         transform.position = cell.worldPosition + _config.CenterOffset;
+        UpdatePatfindingCells(cell);
 
+
+        ConstructBuilding();
+
+    }
+
+    private async void ConstructBuilding()
+    {
+        if(_config.buildTime > 0)
+        {
+          await  UniTask.WaitForSeconds(_config.buildTime, cancellationToken : destroyCancellationToken);
+        }
+       _isBuildingConstructed = true;
+    }
+    /// <summary>
+    /// Gets occupied cells and update pathfinding grid cells.
+    /// </summary>
+    /// <param name="cell">Lower left corner cell of the building</param>
+    private void UpdatePatfindingCells(Cell cell)
+    {
         _cellPositions = new();
         for (int x = 0; x < _config.size.x; x++)
         {
@@ -34,6 +56,7 @@ public class Building : MonoBehaviour, ISelectable
 
     }
 
+    #region Selection System
     public void Select(SelectionMarker selectionMarker)
     {
         Debug.Log($"{name} selected");
@@ -55,4 +78,5 @@ public class Building : MonoBehaviour, ISelectable
     {
         throw new System.NotImplementedException();
     }
+    #endregion
 }

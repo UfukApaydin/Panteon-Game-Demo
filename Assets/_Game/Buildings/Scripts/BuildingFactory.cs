@@ -20,6 +20,8 @@ public class BuildingFactory : IBuildingFactory
     {
         GameObject preview = new GameObject($"{config.buildingName}_Preview");
         preview.transform.localScale = new Vector3(config.size.x, config.size.y, 1);
+     //   var collider = preview.AddComponent<BoxCollider2D>();
+       
         var renderer = preview.AddComponent<SpriteRenderer>();
         renderer.sprite = config.visual;
         renderer.color = config.placementConfig.buildingPreviewTint;

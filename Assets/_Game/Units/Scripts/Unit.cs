@@ -15,6 +15,8 @@ public class Unit : MonoBehaviour, ISelectable
     {
         _agent = GetComponent<PathfindingAgent>();
     }
+
+    #region Selection System
     public void Select(SelectionMarker selectionMarker)
     {
         Debug.Log($"{name} selected");
@@ -38,4 +40,5 @@ public class Unit : MonoBehaviour, ISelectable
     {
         _agent.MoveToPosition(position);
     }
+    #endregion
 }

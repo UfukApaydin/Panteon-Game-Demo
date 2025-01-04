@@ -28,6 +28,7 @@ public class GameInitiator : MonoBehaviour
     [Header("Buildings")]
     public BuildingData[] buildingDatas;
     public LayerMask groundLayerMask;
+    public LayerMask placeableLayerMask;
 
     public static GameInitiator Instance { get; private set; }
 
@@ -55,7 +56,7 @@ public class GameInitiator : MonoBehaviour
     //    pointClick.Init(gridWorldSize, nodeRadius);
         buildingPlacementController = new BuildingPlacementController.Builder()
             .WithBuildings(buildingDatas)
-            .BuildAndStart(buildingPlacementView,groundLayerMask);
+            .BuildAndStart(buildingPlacementView,groundLayerMask, placeableLayerMask);
     }
 
     //Prepare

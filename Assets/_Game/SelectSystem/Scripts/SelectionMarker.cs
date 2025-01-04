@@ -2,15 +2,18 @@ using UnityEngine;
 
 namespace SelectionSystem.Marker
 {
-    public class SelectionMarker : MonoBehaviour
+    public class SelectionMarker : MonoBehaviour , IPoolable
     {
         private Transform _target; 
         private Vector3 _offset;
-        private SelectionMarkerPool _selectionMarkerPool;
+        private PoolSystem _selectionMarkerPool;
         private SpriteRenderer _spriteRenderer;
-        public void Construct(SelectionMarkerPool selectionMarkerPool)
+
+        public GameObject GameObject => gameObject;
+
+        public void Construct(PoolSystem poolSystem)
         {
-            _selectionMarkerPool = selectionMarkerPool;
+            _selectionMarkerPool = poolSystem;
             _spriteRenderer = GetComponent<SpriteRenderer>();
         }
         public void AttachTo(Transform target , Vector3 offset, Vector2 size)
@@ -46,6 +49,8 @@ namespace SelectionSystem.Marker
         {
             gameObject.SetActive(false);
         }
+
+      
 
         #endregion
     }

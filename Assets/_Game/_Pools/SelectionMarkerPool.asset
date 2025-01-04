@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d3ca65ecc1694c44b0709868a869011, type: 3}
   m_Name: SelectionMarkerPool
   m_EditorClassIdentifier: 
-  selectionMarkerPrefab: {fileID: 5687032643751307201, guid: 152abea3f51b8414199690c1b9103cec, type: 3}
+  pooledObj: {fileID: 5153639449032956053, guid: 152abea3f51b8414199690c1b9103cec, type: 3}
   _defaultPoolSize: 50
   _maxPoolSize: 100
