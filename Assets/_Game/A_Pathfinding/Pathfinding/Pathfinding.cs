@@ -20,8 +20,8 @@ namespace A_Pathfinding.Pathfinding
         public void FindPath(PathRequest request, Action<PathResult> callback)
         {
 
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
+            //Stopwatch sw = new Stopwatch();
+//            sw.Start();
 
             Vector3[] waypoints = new Vector3[0];
             bool pathSuccess = false;
@@ -44,7 +44,7 @@ namespace A_Pathfinding.Pathfinding
 
                     if (currentNode == targetNode)
                     {
-                        sw.Stop();
+                  //      sw.Stop();
                         //print ("Path found: " + sw.ElapsedMilliseconds + " ms");
                         pathSuccess = true;
                         break;
@@ -108,7 +108,7 @@ namespace A_Pathfinding.Pathfinding
                 Vector2 directionNew = new Vector2(path[i - 1].gridX - path[i].gridX, path[i - 1].gridY - path[i].gridY);
                 if (directionNew != directionOld)
                 {
-                    waypoints.Add(path[i].worldPosition);
+                    waypoints.Add(path[i-1].worldPosition);
                 }
                 directionOld = directionNew;
             }

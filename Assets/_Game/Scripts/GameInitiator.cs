@@ -9,7 +9,7 @@ public class GameInitiator : MonoBehaviour
 {
     [Header("Bindings")]
     public GridManager gridManager;
-    public PointClick pointClick;
+   // public PointClick pointClick;
     public PathfindingDirector pathfindingDirector;
     public BuildingPlacementController buildingPlacementController;
 
@@ -44,7 +44,7 @@ public class GameInitiator : MonoBehaviour
     private void BindObjects()
     {
         gridManager = Instantiate(gridManagerPrefab, transform);
-        pointClick = Instantiate(pointClickPrefab, transform);
+    //    pointClick = Instantiate(pointClickPrefab, transform);
     }
 
     private void Initialize()
@@ -52,7 +52,7 @@ public class GameInitiator : MonoBehaviour
         pathfindingDirector = new PathfindingDirector()
             .InitializePathfinding(gridWorldSize, nodeRadius / 2, unwalkableLayerMask);
         gridManager.Init(gridWorldSize, nodeRadius);
-        pointClick.Init(gridWorldSize, nodeRadius);
+    //    pointClick.Init(gridWorldSize, nodeRadius);
         buildingPlacementController = new BuildingPlacementController.Builder()
             .WithBuildings(buildingDatas)
             .BuildAndStart(buildingPlacementView,groundLayerMask);

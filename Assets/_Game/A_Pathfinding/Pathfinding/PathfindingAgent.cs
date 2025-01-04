@@ -1,11 +1,9 @@
-using A_Pathfinding.Nodes;
 using System.Collections;
-using System.IO;
 using UnityEngine;
-using Grid = A_Pathfinding.Nodes.PathfindingGrid;
+
 namespace A_Pathfinding.Pathfinding
 {
-    public class Unit : MonoBehaviour
+    public class PathfindingAgent : MonoBehaviour
     {
         const float minPathUpdateTime = .2f;
         const float pathUpdateMoveThreshold = .5f;
@@ -17,12 +15,7 @@ namespace A_Pathfinding.Pathfinding
         public float stoppingDst = 10;
 
         private int targetIndex;
-       // Path path;
         Vector3[] path;
-        void Start()
-        {
-          //  StartCoroutine(UpdatePath());
-        }
 
         public void MoveToPosition(Vector3 targetPosition)
         {
@@ -32,7 +25,7 @@ namespace A_Pathfinding.Pathfinding
 
         public void UpdatePath()
         {
-            PathRequestManager.RequestPath( new PathRequest(transform.position, target, OnPathFound));
+            PathRequestManager.RequestPath(new PathRequest(transform.position, target, OnPathFound));
         }
         public void OnPathFound(Vector3[] newPath, bool pathSuccessful)
         {
@@ -66,7 +59,7 @@ namespace A_Pathfinding.Pathfinding
 
             }
         }
-     
+
         public void OnDrawGizmos()
         {
             if (path != null)
@@ -105,19 +98,19 @@ namespace A_Pathfinding.Pathfinding
         //    {
         //        yield return new WaitForSeconds(.3f);
         //    }
-        //    PathRequestManager.RequestPath(new PathRequest(transform.position, target, OnPathFound));
+        //    PathRequestManager.RequestPath(new PathRequest(transform.position, _target, OnPathFound));
 
         //    float sqrMoveThreshold = pathUpdateMoveThreshold * pathUpdateMoveThreshold;
-        //    Vector3 targetPosOld = target;
+        //    Vector3 targetPosOld = _target;
 
         //    while (true)
         //    {
         //        yield return new WaitForSeconds(minPathUpdateTime);
-        //        print(((target - targetPosOld).sqrMagnitude) + "    " + sqrMoveThreshold);
-        //        if ((target - targetPosOld).sqrMagnitude > sqrMoveThreshold)
+        //        print(((_target - targetPosOld).sqrMagnitude) + "    " + sqrMoveThreshold);
+        //        if ((_target - targetPosOld).sqrMagnitude > sqrMoveThreshold)
         //        {
-        //            PathRequestManager.RequestPath(new PathRequest(transform.position, target, OnPathFound));
-        //            targetPosOld = target;
+        //            PathRequestManager.RequestPath(new PathRequest(transform.position, _target, OnPathFound));
+        //            targetPosOld = _target;
         //        }
         //    }
         //}
@@ -180,12 +173,6 @@ namespace A_Pathfinding.Pathfinding
         //    }
         //}
 
-        //public void OnDrawGizmos()
-        //{
-        //    if (path != null)
-        //    {
-        //        path.DrawWithGizmos();
-        //    }
-        //}
+
     }
 }

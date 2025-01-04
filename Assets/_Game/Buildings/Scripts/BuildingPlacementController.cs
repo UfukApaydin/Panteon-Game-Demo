@@ -8,24 +8,25 @@ public class BuildingPlacementController : MonoBehaviour
 
     public LayerMask groundLayer;
 
-    private BuildingData selectedBuilding = null;
-    private GameObject previewInstance;
-    private BuildingFactory buildingFactory;
-    private Camera mainCamera;
+    private Camera _mainCamera;
+    private BuildingFactory _buildingFactory;
+    private BuildingData _selectedBuilding = null;
+    private GameObject _previewInstance;
+    private Vector3 _buildingOffset;
 
     //private BuildingPlacementController(BuildingPlacementView placementView, BuildingPlacementModel placementModel, LayerMask groundLayer)
     //{
     //    this.placementView = placementView;
     //    this.placementModel = placementModel;
     //    this.groundLayer = groundLayer;
-    //    mainCamera = Camera.main;
-    //    buildingFactory = new BuildingFactory();
+    //    _mainCamera = Camera.main;
+    //    _buildingFactory = new BuildingFactory();
 
     //}
     private void Awake()
     {
-        mainCamera = Camera.main;
-        buildingFactory = new BuildingFactory();
+        _mainCamera = Camera.main;
+        _buildingFactory = new BuildingFactory();
     }
 
     private void StartController()
@@ -36,18 +37,19 @@ public class BuildingPlacementController : MonoBehaviour
 
     public void SelectBuilding(BuildingData buildingData)
     {
-        selectedBuilding = buildingData;
-        if (previewInstance != null)
+        _selectedBuilding = buildingData;
+        if (_previewInstance != null)
         {
-            Destroy(previewInstance);
+            Destroy(_previewInstance);
         }
-        previewInstance = buildingFactory.CreatePreview(buildingData);
+        _buildingOffset = buildingData.CenterOffset;
+        _previewInstance = _buildingFactory.CreatePreview(buildingData);
 
     }
 
     private void Update()
     {
-        if (selectedBuilding != null /*&& previewInstance != null*/)
+        if (_selectedBuilding != null /*&& _previewInstance != null*/)
         {
             HandleBuildingPlacement();
         }
@@ -56,14 +58,14 @@ public class BuildingPlacementController : MonoBehaviour
     private void HandleBuildingPlacement()
     {
 
-        Vector3 mouseWorldPos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
+        Vector3 mouseWorldPos = _mainCamera.ScreenToWorldPoint(Input.mousePosition);
         Vector2 mouseWorldPos2D = new Vector2(mouseWorldPos.x, mouseWorldPos.y);
 
         RaycastHit2D hit = Physics2D.Raycast(mouseWorldPos2D, Vector2.zero, 0f, groundLayer);
         if (hit.collider != null)
         {
             Vector3 snappedPosition = SnapToGrid(hit.point);
-            previewInstance.transform.position = snappedPosition;
+            _previewInstance.transform.position = snappedPosition+_buildingOffset;
 
             // check if building can be placed;
 
@@ -77,11 +79,11 @@ public class BuildingPlacementController : MonoBehaviour
     private void PlaceBuilding(Vector3 position)
     {
 
-        buildingFactory.Create(selectedBuilding).Build(GameInitiator.Instance.gridManager.GetCellFromWorlPosition(position)); 
+        _buildingFactory.Create(_selectedBuilding).Build(GameInitiator.Instance.gridManager.GetCellFromWorlPosition(position)); 
 
-        Destroy(previewInstance);                                                                                                                                                                                                       
-        previewInstance = null;
-        selectedBuilding = null;
+        Destroy(_previewInstance);                                                                                                                                                                                                       
+        _previewInstance = null;
+        _selectedBuilding = null;
     }
     public Vector3 SnapToGrid(Vector3 position)
     {

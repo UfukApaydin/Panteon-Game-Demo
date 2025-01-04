@@ -10,7 +10,7 @@ namespace A_Pathfinding.Test
         [SerializeField]
         private LayerMask groundLayerMask;
 
-        private List<Unit> units;
+        private List<PathfindingAgent> units;
         private bool isButtonClicked;
         private GameObject clickPointObj;
         private Vector2Int gridSize;
@@ -29,7 +29,7 @@ namespace A_Pathfinding.Test
             this.gridSize = gridSize;
             this.cellSize = cellSize;
             mainCamera = Camera.main;
-            units = FindObjectsByType<Unit>(FindObjectsSortMode.None).ToList();
+            units = FindObjectsByType<PathfindingAgent>(FindObjectsSortMode.None).ToList();
             clickPointObj = Instantiate(clickPointPrefab);
             buildingFactory = new BuildingFactory();
         }
@@ -69,13 +69,13 @@ namespace A_Pathfinding.Test
 
                     if (canBuild)
                     {
-                       // buildingFactory.Create(selectedBuildingPrefab).Build(GameInitiator.Instance.gridManager.GetCellFromWorlPosition(groundPosition));
+                       // _buildingFactory.Create(selectedBuildingPrefab).Build(GameInitiator.Instance.gridManager.GetCellFromWorlPosition(groundPosition));
                         //var prefab = Instantiate(selectedBuildingPrefab, groundPosition, Quaternion.identity);
                         //prefab.Build(GameInitiator.Instance.gridManager.GetCellFromWorlPosition(groundPosition));
                     }
                     else
                     {
-                        foreach (Unit unit in units)
+                        foreach (PathfindingAgent unit in units)
                         {
                             unit.MoveToPosition(groundPosition);
                         }
