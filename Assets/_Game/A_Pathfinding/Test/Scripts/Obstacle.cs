@@ -1,6 +1,5 @@
-using A_Pathfinding.Nodes;
+using A_Pathfinding.Pathfinding;
 using UnityEngine;
-using PathfindingGrid = A_Pathfinding.Nodes.PathfindingGrid;
 
 namespace A_Pathfinding.Test
 {
@@ -10,9 +9,9 @@ namespace A_Pathfinding.Test
         void Start()
         {
 
-            GameInitiator.Instance.pathfindingDirector.grid.UpdateNodesWalkable(transform.position, 2, false);
+            ServiceLocator.Get<PathfindingDirector>().grid.UpdateNodesWalkable(transform.position, 2, false);
         }
 
-       
+
     }
 }

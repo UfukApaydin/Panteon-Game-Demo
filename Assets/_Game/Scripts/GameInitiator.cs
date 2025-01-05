@@ -1,24 +1,15 @@
-using A_Pathfinding.Nodes;
 using A_Pathfinding.Pathfinding;
-using A_Pathfinding.Test;
-using TileSystem;
+using GridSystem;
 using UnityEngine;
-using PathfindingGrid = A_Pathfinding.Nodes.PathfindingGrid;
 
 public class GameInitiator : MonoBehaviour
 {
-    [Header("Bindings")]
-    public GridManager gridManager;
-   // public PointClick pointClick;
-    public PathfindingDirector pathfindingDirector;
-    public BuildingPlacementController buildingPlacementController;
+    [Header("Configs")]
+    public GridConfig gridConfig;
 
     [Header("From Scene")]
     public BuildingPlacementView buildingPlacementView;
 
-    [Header("Bindings Prefab")]
-    [SerializeField] private GridManager gridManagerPrefab;
-    [SerializeField] private PointClick pointClickPrefab;
 
     [Header("Settings")]
     [Header("Grid")]
@@ -38,28 +29,19 @@ public class GameInitiator : MonoBehaviour
     }
     public void Start()
     {
-        BindObjects();
-        Initialize();
+        Init();
     }
 
-    private void BindObjects()
-    {
-        gridManager = Instantiate(gridManagerPrefab, transform);
-    //    pointClick = Instantiate(pointClickPrefab, transform);
-    }
 
-    private void Initialize()
+    private void Init()
     {
-        pathfindingDirector = new PathfindingDirector()
-            .InitializePathfinding(gridWorldSize, nodeRadius / 2, unwalkableLayerMask);
-        gridManager.Init(gridWorldSize, nodeRadius);
-    //    pointClick.Init(gridWorldSize, nodeRadius);
-        buildingPlacementController = new BuildingPlacementController.Builder()
+        ServiceLocator.Register(new GridManager(gridConfig));
+        ServiceLocator.Register(new PathfindingDirector()
+            .InitializePathfinding(gridWorldSize, nodeRadius / 2, unwalkableLayerMask));
+        ServiceLocator.Register(new BuildingPlacementController.Builder()
             .WithBuildings(buildingDatas)
-            .BuildAndStart(buildingPlacementView,groundLayerMask, placeableLayerMask);
+            .BuildAndStart(buildingPlacementView, groundLayerMask, placeableLayerMask));
+
     }
 
-    //Prepare
-
-    //Start Game
 }

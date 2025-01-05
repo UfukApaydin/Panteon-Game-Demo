@@ -1,4 +1,4 @@
-using A_Pathfinding.Nodes;
+using A_Pathfinding.Pathfinding;
 using UnityEngine;
 using PathfindingGrid = A_Pathfinding.Nodes.PathfindingGrid;
 
@@ -6,7 +6,7 @@ namespace A_Pathfinding.Test
 {
     public class PlaceObstacle : MonoBehaviour
     {
-         
+
         [SerializeField]
         private Camera mainCamera;
 
@@ -14,7 +14,7 @@ namespace A_Pathfinding.Test
         public GameObject objectToPlace;
 
         private GameObject previewObject;
-        float cellSize => GameInitiator.Instance.pathfindingDirector.grid.nodeRadius;
+        float cellSize => ServiceLocator.Get<PathfindingDirector>().grid.nodeRadius;
         public LayerMask groundLayer;
 
 
@@ -56,7 +56,7 @@ namespace A_Pathfinding.Test
             if (previewObject == null)
             {
                 previewObject = Instantiate(objectToPlace);
-              //  previewObject.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0.5f); // Make semi-transparent
+                //  previewObject.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0.5f); // Make semi-transparent
             }
 
             previewObject.transform.position = position;

@@ -1,4 +1,6 @@
+using A_Pathfinding.Pathfinding;
 using Cysharp.Threading.Tasks;
+using GridSystem;
 using SelectionSystem;
 using SelectionSystem.Marker;
 using System.Collections.Generic;
@@ -39,7 +41,7 @@ public class Building : MonoBehaviour, ISelectable
        _isBuildingConstructed = true;
     }
     /// <summary>
-    /// Gets occupied cells and update pathfinding grid cells.
+    /// Gets occupied _cells and update pathfinding grid _cells.
     /// </summary>
     /// <param name="cell">Lower left corner cell of the building</param>
     private void UpdatePatfindingCells(Cell cell)
@@ -52,7 +54,7 @@ public class Building : MonoBehaviour, ISelectable
                 _cellPositions.Add(new Vector2Int(cell.gridX + x, cell.gridY + y));
             }
         }
-        GameInitiator.Instance.pathfindingDirector.grid.UpdateNodesWalkableCell(_cellPositions.ToArray(), false);
+        ServiceLocator.Get<PathfindingDirector>().grid.UpdateNodesWalkableCell(_cellPositions.ToArray(), false);
 
     }
 

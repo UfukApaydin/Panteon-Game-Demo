@@ -1,4 +1,5 @@
 using System;
+using GridSystem;
 using UnityEngine;
 
 public class BuildingPlacementController : MonoBehaviour
@@ -121,7 +122,7 @@ public class BuildingPlacementController : MonoBehaviour
     private void PlaceBuilding(Vector3 position)
     {
 
-        _buildingFactory.Create(_selectedBuilding).Build(GameInitiator.Instance.gridManager.GetCellFromWorlPosition(position));
+        _buildingFactory.Create(_selectedBuilding).Build(ServiceLocator.Get<GridManager>().GetCellFromWorlPosition(position));
 
         Destroy(_previewInstance);
         _previewInstance = null;
@@ -129,7 +130,7 @@ public class BuildingPlacementController : MonoBehaviour
     }
     public Vector3 SnapToGrid(Vector3 position)
     {
-        var pos = GameInitiator.Instance.gridManager.GetSnapPosition(position);  //----------------------Change This-------------------
+        var pos = ServiceLocator.Get<GridManager>().GetSnapPosition(position);  //----------------------Change This-------------------
         return new Vector3(pos.x, pos.y, 0);
 
     }

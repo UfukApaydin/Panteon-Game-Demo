@@ -1,6 +1,7 @@
 using A_Pathfinding.Pathfinding;
 using System.Collections.Generic;
 using System.Linq;
+using GridSystem;
 using UnityEngine;
 
 namespace A_Pathfinding.Test
@@ -93,7 +94,7 @@ namespace A_Pathfinding.Test
         }
         public Vector3 SnapToGrid(Vector3 position)
         {
-           var pos = GameInitiator.Instance.gridManager.GetSnapPosition(position);  //----------------------Change This-------------------
+           var pos = ServiceLocator.Get<GridManager>().GetSnapPosition(position);  //----------------------Change This-------------------
             return new Vector3(pos.x, pos.y, 0);
         
         }
