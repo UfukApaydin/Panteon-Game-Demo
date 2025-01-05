@@ -4582,22 +4582,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f6cd92372d856c448807c0b615f7364, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridConfig: {fileID: 0}
+  gridConfig: {fileID: 11400000, guid: b449123f9dbb9754f96fb2bac658370c, type: 2}
+  buildSystemConfig: {fileID: 0}
   buildingPlacementView: {fileID: 1336128717}
   gridWorldSize: {x: 200, y: 200}
   nodeRadius: 1
   unwalkableLayerMask:
     serializedVersion: 2
     m_Bits: 64
-  buildingDatas:
-  - {fileID: 11400000, guid: 2560f14af3f2122419ed1fd0b71c4cf9, type: 2}
-  - {fileID: 11400000, guid: c47020abf21e2a9488ae475400dc7588, type: 2}
-  groundLayerMask:
-    serializedVersion: 2
-    m_Bits: 128
-  placeableLayerMask:
-    serializedVersion: 2
-    m_Bits: 768
 --- !u!4 &1867604117
 Transform:
   m_ObjectHideFlags: 0

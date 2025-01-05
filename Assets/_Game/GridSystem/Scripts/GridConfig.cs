@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace GridSystem
 {
-    [CreateAssetMenu(fileName = "GridConfig", menuName = "Scriptable Objects/Configs/GridConfig")]
+    [CreateAssetMenu(fileName = "New_GridConfig", menuName = "Scriptable Objects/Configs/GridConfig")]
     public class GridConfig : ScriptableObject
     { 
         public Vector3 originPosition;

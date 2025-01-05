@@ -1,13 +1,14 @@
-using System;
 using GridSystem;
+using System;
 using UnityEngine;
 
 public class BuildingPlacementController : MonoBehaviour
 {
+
+    public BuildSystemConfig buildSystemConfig;
+
     public BuildingPlacementView placementView;
     public BuildingPlacementModel placementModel;
-
-    public LayerMask groundLayer;
 
     private Camera _mainCamera;
     private BuildingFactory _buildingFactory;
@@ -15,18 +16,7 @@ public class BuildingPlacementController : MonoBehaviour
     private GameObject _previewInstance;
     private Vector3 _buildingOffset;
 
-    // preview configs
-    private LayerMask _previewCollideLayers;
 
-    //private BuildingPlacementController(BuildingPlacementView placementView, BuildingPlacementModel placementModel, LayerMask groundLayer)
-    //{
-    //    this.placementView = placementView;
-    //    this.placementModel = placementModel;
-    //    this.groundLayer = groundLayer;
-    //    _mainCamera = Camera.main;
-    //    _buildingFactory = new BuildingFactory();
-
-    //}
     private void Awake()
     {
         _mainCamera = Camera.main;
@@ -61,10 +51,10 @@ public class BuildingPlacementController : MonoBehaviour
                 {
                     HandleBuildingPlacement(mousePosition);
                 }
-            
+
 
             }
-       
+
         }
     }
     private bool GetMousePosition(out Vector3 position)
@@ -72,7 +62,7 @@ public class BuildingPlacementController : MonoBehaviour
         Vector3 mouseWorldPos = _mainCamera.ScreenToWorldPoint(Input.mousePosition);
         Vector2 mouseWorldPos2D = new Vector2(mouseWorldPos.x, mouseWorldPos.y);
 
-        RaycastHit2D hit = Physics2D.Raycast(mouseWorldPos2D, Vector2.zero, 0f, groundLayer);
+        RaycastHit2D hit = Physics2D.Raycast(mouseWorldPos2D, Vector2.zero, 0f, buildSystemConfig.groundLayerMask);
         if (hit.collider != null)
         {
             position = SnapToGrid(hit.point);
@@ -85,7 +75,7 @@ public class BuildingPlacementController : MonoBehaviour
     {
         _previewInstance.transform.position = position + _buildingOffset;
 
-       Collider2D overlapCollider = Physics2D.OverlapBox(_previewInstance.transform.position,_selectedBuilding.size-Vector2.one, 0,_previewCollideLayers);
+        Collider2D overlapCollider = Physics2D.OverlapBox(_previewInstance.transform.position, _selectedBuilding.size - Vector2.one, 0, buildSystemConfig.previewCollideLayers);
         if (overlapCollider != null)
         {
             _previewInstance.GetComponent<SpriteRenderer>().color = _selectedBuilding.placementConfig.buildingPreviewRestrictedTint;
@@ -96,27 +86,15 @@ public class BuildingPlacementController : MonoBehaviour
             _previewInstance.GetComponent<SpriteRenderer>().color = _selectedBuilding.placementConfig.buildingPreviewTint;
             return true;
         }
-       
+
     }
     private void HandleBuildingPlacement(Vector3 position)
     {
+        if (Input.GetMouseButtonDown(0))
+        {
+            PlaceBuilding(position);
+        }
 
-        //Vector3 mouseWorldPos = _mainCamera.ScreenToWorldPoint(Input.mousePosition);
-        //Vector2 mouseWorldPos2D = new Vector2(mouseWorldPos.x, mouseWorldPos.y);
-
-        //RaycastHit2D hit = Physics2D.Raycast(mouseWorldPos2D, Vector2.zero, 0f, groundLayer);
-        //if (hit.collider != null)
-        //{
-           // Vector3 snappedPosition = SnapToGrid(hit.point);
-           // _previewInstance.transform.position = snappedPosition + _buildingOffset;
-
-            // check if building can be placed;
-
-            if (Input.GetMouseButtonDown(0)) // Left-click to place
-            {
-                PlaceBuilding(position);
-            }
-        //}
     }
 
     private void PlaceBuilding(Vector3 position)
@@ -130,7 +108,7 @@ public class BuildingPlacementController : MonoBehaviour
     }
     public Vector3 SnapToGrid(Vector3 position)
     {
-        var pos = ServiceLocator.Get<GridManager>().GetSnapPosition(position);  //----------------------Change This-------------------
+        var pos = ServiceLocator.Get<GridManager>().GetSnapPosition(position); 
         return new Vector3(pos.x, pos.y, 0);
 
     }
@@ -145,7 +123,7 @@ public class BuildingPlacementController : MonoBehaviour
             isBuildingProvided = true;
             return this;
         }
-        public BuildingPlacementController Build(BuildingPlacementView view, LayerMask groundLayerMask, LayerMask unitLayerMask)
+        public BuildingPlacementController Build(BuildingPlacementView view, BuildSystemConfig buildSystemConfig)
         {
             if (view != null)
             {
@@ -154,17 +132,16 @@ public class BuildingPlacementController : MonoBehaviour
                 var controller = new GameObject("BuildingPlacementController").AddComponent<BuildingPlacementController>();
                 controller.placementView = view;
                 controller.placementModel = model;
-                controller.groundLayer = groundLayerMask;
-                controller._previewCollideLayers = unitLayerMask;
+                controller.buildSystemConfig = buildSystemConfig;
                 return controller;
 
             }
             else
                 throw new InvalidOperationException("Controller controller cannot be null");
         }
-        public BuildingPlacementController BuildAndStart(BuildingPlacementView view, LayerMask groundLayerMask, LayerMask unitLayerMask)
+        public BuildingPlacementController BuildAndStart(BuildingPlacementView view, BuildSystemConfig buildSystemConfig)
         {
-            var controller = Build(view, groundLayerMask, unitLayerMask);
+            var controller = Build(view, buildSystemConfig);
             controller.StartController();
             return controller;
         }

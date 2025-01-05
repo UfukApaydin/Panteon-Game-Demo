@@ -1,4 +1,5 @@
 using A_Pathfinding.Nodes;
+using GridSystem;
 using UnityEngine;
 
 namespace A_Pathfinding.Pathfinding
@@ -8,12 +9,12 @@ namespace A_Pathfinding.Pathfinding
         public PathfindingGrid grid;
         public Pathfinding pathfinding;
         public PathRequestManager pathRequestManager;
-       public PathfindingDirector InitializePathfinding(Vector2 worldGridSize, float nodeRadius, LayerMask unwalkableLayerMask)
+       public PathfindingDirector InitializePathfinding(GridConfig gridConfig/*, LayerMask unwalkableLayerMask*/)
        {
              grid = new PathfindingGrid.Builder()
-                .SetGridWorldSize(worldGridSize)
-                .SetNodeRadius(nodeRadius)
-                .SetLayerMask(unwalkableLayerMask)
+                .SetGridWorldSize(gridConfig.gridWorldSize)
+                .SetNodeRadius(gridConfig.CellHalfSize)
+              //  .SetLayerMask(unwalkableLayerMask)
                 .BuildAndStart();
             Pathfinding pathfinding = new Pathfinding(grid);
             PathRequestManager pathRequestManager = new PathRequestManager.Builder()

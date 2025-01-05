@@ -5,11 +5,11 @@ namespace A_Pathfinding.Nodes
 {
     public class PathfindingGrid 
     {
-        public bool displayGridGizmos = false;
+        public bool displayGridGizmos = true;
 
         public readonly float nodeRadius;
         private Vector3 originPosition;
-        private LayerMask unwalkableMask;
+        //private LayerMask unwalkableMask;
         private Vector2 gridWorldSize;
         private Node[,] grid;
         private float nodeDiameter;
@@ -18,12 +18,12 @@ namespace A_Pathfinding.Nodes
 
         public int MaxSize => gridSizeX * gridSizeY;
 
-         PathfindingGrid(Vector3 originPosition, Vector2 gridWorldSize, float nodeRadius, LayerMask unwalkableMask)
+         PathfindingGrid(Vector3 originPosition, Vector2 gridWorldSize, float nodeRadius/*, LayerMask unwalkableMask*/)
         {
             this.originPosition = originPosition;
             this.gridWorldSize = gridWorldSize;
             this.nodeRadius = nodeRadius;
-            this.unwalkableMask = unwalkableMask;
+          //  this.unwalkableMask = unwalkableMask;
 
             nodeDiameter = nodeRadius * 2;
         }
@@ -43,22 +43,12 @@ namespace A_Pathfinding.Nodes
                 for (int y = 0; y < gridSizeY; y++)
                 {
                     Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * nodeDiameter + nodeRadius) + Vector3.up * (y * nodeDiameter + nodeRadius);
-                    bool walkable = !(Physics2D.OverlapCircle(worldPoint, nodeRadius, unwalkableMask));
+                    bool walkable = true;
+                    //   bool walkable  = !(Physics2D.OverlapCircle(worldPoint, nodeRadius, unwalkableMask));
 
-                   
+
                     grid[x, y] = new Node(walkable, worldPoint, x, y/*, movementPenalty*/);
                 }
-            }
-        }
-        public void UpdateNodesWalkable(Vector3 originPosition, int radius, bool isWalkable)
-        {
-            Node originNode = NodeFromWorldPoint(originPosition);
-            List<Node> nodes = GetNeighbours(originNode, radius);
-            nodes.Add(originNode);
-            foreach (Node node in nodes)
-            {
-                node.walkable = !(Physics2D.OverlapCircle(node.worldPosition, nodeRadius, unwalkableMask));
-
             }
         }
         public void UpdateNodesWalkableCell(Vector2Int[] cellIndexes, bool isWalkable)
@@ -137,7 +127,7 @@ namespace A_Pathfinding.Nodes
             private Vector3 originPosition = Vector3.zero;
             private Vector2 gridWorldSize = new Vector2(50,50); 
             private float nodeRadius = 1;
-            private LayerMask unwalkableMask;
+            //private LayerMask unwalkableMask;
 
             public Builder SetOriginPosition(Vector3 position)
             { 
@@ -154,14 +144,14 @@ namespace A_Pathfinding.Nodes
                 nodeRadius = radius;
                 return this;
             }
-            public Builder SetLayerMask(LayerMask layerMask)
-            {
-                unwalkableMask = layerMask;
-                return this;
-            }
+            //public Builder SetLayerMask(LayerMask layerMask)
+            //{
+            //    unwalkableMask = layerMask;
+            //    return this;
+            //}
             public PathfindingGrid Build()
             {
-                return new PathfindingGrid(originPosition, gridWorldSize, nodeRadius, unwalkableMask);
+                return new PathfindingGrid(originPosition, gridWorldSize, nodeRadius/*, unwalkableMask*/);
             }
             public PathfindingGrid BuildAndStart()
             {

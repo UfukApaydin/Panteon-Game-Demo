@@ -6,20 +6,18 @@ public class GameInitiator : MonoBehaviour
 {
     [Header("Configs")]
     public GridConfig gridConfig;
+    public BuildSystemConfig buildSystemConfig;
 
     [Header("From Scene")]
     public BuildingPlacementView buildingPlacementView;
 
 
-    [Header("Settings")]
-    [Header("Grid")]
-    public Vector2Int gridWorldSize;
-    public float nodeRadius;
-    public LayerMask unwalkableLayerMask;
-    [Header("Buildings")]
-    public BuildingData[] buildingDatas;
-    public LayerMask groundLayerMask;
-    public LayerMask placeableLayerMask;
+    //[Header("Settings")]
+    //[Header("Grid")]
+    //public Vector2Int gridWorldSize;
+    //public float nodeRadius;
+    //public LayerMask unwalkableLayerMask;
+
 
     public static GameInitiator Instance { get; private set; }
 
@@ -37,10 +35,10 @@ public class GameInitiator : MonoBehaviour
     {
         ServiceLocator.Register(new GridManager(gridConfig));
         ServiceLocator.Register(new PathfindingDirector()
-            .InitializePathfinding(gridWorldSize, nodeRadius / 2, unwalkableLayerMask));
+            .InitializePathfinding(gridConfig));
         ServiceLocator.Register(new BuildingPlacementController.Builder()
-            .WithBuildings(buildingDatas)
-            .BuildAndStart(buildingPlacementView, groundLayerMask, placeableLayerMask));
+            .WithBuildings(buildSystemConfig.buildingDatas)
+            .BuildAndStart(buildingPlacementView, buildSystemConfig));
 
     }
 
