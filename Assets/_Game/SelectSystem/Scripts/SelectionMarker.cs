@@ -1,4 +1,5 @@
 using UnityEngine;
+using ObjectPoolSystem;
 
 namespace SelectionSystem.Marker
 {
@@ -11,7 +12,7 @@ namespace SelectionSystem.Marker
 
         public GameObject GameObject => gameObject;
 
-        public void Construct(PoolSystem poolSystem)
+        public void Init(PoolSystem poolSystem)
         {
             _selectionMarkerPool = poolSystem;
             _spriteRenderer = GetComponent<SpriteRenderer>();
@@ -26,7 +27,7 @@ namespace SelectionSystem.Marker
         public void Detach()
         {
             _target = null;
-            _selectionMarkerPool.ReturnMarker(this);
+            _selectionMarkerPool.Return(this);
         
         }
 
@@ -50,7 +51,12 @@ namespace SelectionSystem.Marker
             gameObject.SetActive(false);
         }
 
-      
+        public void UpdateArgs(params object[] args)
+        {
+            throw new System.NotImplementedException();
+        }
+
+
 
         #endregion
     }

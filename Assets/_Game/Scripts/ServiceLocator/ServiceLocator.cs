@@ -20,6 +20,7 @@ public static class ServiceLocator
         }
 
         services[type] = service;
+     
     }
 
     /// <summary>

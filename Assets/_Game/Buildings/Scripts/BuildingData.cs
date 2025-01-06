@@ -1,15 +1,23 @@
 using UnityEngine;
-
-[CreateAssetMenu(fileName = "Building", menuName = "Scriptable Objects/Buildings/BuildingData")]
+using ObjectPoolSystem;
+using Game.Unit;
+[CreateAssetMenu(fileName = "BuildingBase", menuName = "Scriptable Objects/Buildings/BuildingData")]
 public class BuildingData : ScriptableObject
 {
-    public GameObject prefab;
+    [Header("Config")]
     public string buildingName;
-    public Sprite visual;
-    public Sprite icon;
-    public float maxHealth;
+    public int maxHealth;
     public Vector2Int size;
-    public BuildingPlacementConfig placementConfig;
     public float buildTime = 0;
+    public bool canProduceUnit = true;
+    public UnitData[] unitDatas;
+    public BuildingPlacementConfig placementConfig;
+
+    [Header("Visuals")]
+    public GameObject prefab;
+    public Sprite visual;
+    public Texture icon;
+
     public Vector3 CenterOffset => new((size.x - 1) * 0.5f, (size.y - 1) * 0.5f, 0);
+    public PoolSystem waypointPool;
 }

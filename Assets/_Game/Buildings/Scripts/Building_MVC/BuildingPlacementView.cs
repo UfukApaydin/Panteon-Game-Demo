@@ -3,13 +3,13 @@ using UnityEngine;
 using UnityEngine.UI;
 public class BuildingPlacementView : MonoBehaviour
 {
-    public BuildingPlacementController buildingController;
     public Transform buttonContainer;
     public GameObject buttonPrefab;
 
-    public void Initialize(BuildingPlacementController buildingController,BuildingData[] buildings)
+    private BuildingPlacementController _buildingController;
+    public void Init(BuildingPlacementController buildingController,BuildingData[] buildings)
     {
-        this.buildingController = buildingController;
+        _buildingController = buildingController;
         CreateBuildingButtons(buildings);
     }
     public void CreateBuildingButtons(BuildingData[] buildings)
@@ -19,7 +19,7 @@ public class BuildingPlacementView : MonoBehaviour
             GameObject buttonInstance = Instantiate(buttonPrefab, buttonContainer);
         //    buttonInstance.GetComponent<Image>().sprite = building.icon;
             buttonInstance.GetComponentInChildren<TMP_Text>().text = building.name;
-            buttonInstance.GetComponent<Button>().onClick.AddListener(() => buildingController.SelectBuilding(building));
+            buttonInstance.GetComponent<Button>().onClick.AddListener(() => _buildingController.SelectBuilding(building));
         }
     }
 }

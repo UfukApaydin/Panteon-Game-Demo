@@ -12,13 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6141e5ccf6a854e4b806a26809619fc4, type: 3}
   m_Name: DefaultBuildSystemConfig
   m_EditorClassIdentifier: 
-  buildingDatas: []
+  buildingDatas:
+  - {fileID: 11400000, guid: 2560f14af3f2122419ed1fd0b71c4cf9, type: 2}
+  - {fileID: 11400000, guid: c47020abf21e2a9488ae475400dc7588, type: 2}
   groundLayerMask:
     serializedVersion: 2
-    m_Bits: 0
-  placeableLayerMask:
-    serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 128
   previewCollideLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 768

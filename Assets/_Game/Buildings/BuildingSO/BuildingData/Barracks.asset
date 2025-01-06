@@ -12,11 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8f89f12b94559446bf0fac95fafe010, type: 3}
   m_Name: Barracks
   m_EditorClassIdentifier: 
-  prefab: {fileID: 1724068046380614960, guid: 4a1eb5022ebac05479090f5344dd9185, type: 3}
   buildingName: Barracks
-  visual: {fileID: 21300000, guid: b3977ef18964d344bbb7b34a6e5ba50a, type: 3}
-  icon: {fileID: 21300000, guid: b3977ef18964d344bbb7b34a6e5ba50a, type: 3}
   maxHealth: 100
   size: {x: 4, y: 4}
-  placementConfig: {fileID: 11400000, guid: 2ff6b4e85cd9221458b295cebd8c6bd3, type: 2}
   buildTime: 0
+  canProduceUnit: 1
+  unitDatas:
+  - {fileID: 11400000, guid: fd251da30f7b5814f847d943893a89bc, type: 2}
+  - {fileID: 11400000, guid: 04e303ebcad10f4449a3c621749bbd57, type: 2}
+  - {fileID: 11400000, guid: 0205c8b90aef4e44c96a85d0cc1f8388, type: 2}
+  placementConfig: {fileID: 11400000, guid: 2ff6b4e85cd9221458b295cebd8c6bd3, type: 2}
+  prefab: {fileID: 1724068046380614960, guid: 4a1eb5022ebac05479090f5344dd9185, type: 3}
+  visual: {fileID: 21300000, guid: b3977ef18964d344bbb7b34a6e5ba50a, type: 3}
+  icon: {fileID: 2800000, guid: b3977ef18964d344bbb7b34a6e5ba50a, type: 3}
+  waypointPool: {fileID: 11400000, guid: 4aa4ec1a5d1d0f1468282af3923ff93d, type: 2}

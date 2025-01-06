@@ -4,28 +4,25 @@ using UnityEngine;
 
 public class BuildingPlacementController : MonoBehaviour
 {
-
     public BuildSystemConfig buildSystemConfig;
-
     public BuildingPlacementView placementView;
     public BuildingPlacementModel placementModel;
 
     private Camera _mainCamera;
-    private BuildingFactory _buildingFactory;
     private BuildingData _selectedBuilding = null;
     private GameObject _previewInstance;
     private Vector3 _buildingOffset;
 
+    private FactoryManager factoryManager => ServiceLocator.Get<FactoryManager>();
 
     private void Awake()
     {
         _mainCamera = Camera.main;
-        _buildingFactory = new BuildingFactory();
     }
 
     private void StartController()
     {
-        placementView.Initialize(this, placementModel.buildingConfigs.ToArray());
+        placementView.Init(this, placementModel.buildingConfigs.ToArray());
     }
 
 
@@ -37,7 +34,7 @@ public class BuildingPlacementController : MonoBehaviour
             Destroy(_previewInstance);
         }
         _buildingOffset = buildingData.CenterOffset;
-        _previewInstance = _buildingFactory.CreatePreview(buildingData);
+        _previewInstance = factoryManager.Create<BuildingPreview>(new[] { buildingData }).gameObject;
 
     }
 
@@ -100,8 +97,8 @@ public class BuildingPlacementController : MonoBehaviour
     private void PlaceBuilding(Vector3 position)
     {
 
-        _buildingFactory.Create(_selectedBuilding).Build(ServiceLocator.Get<GridManager>().GetCellFromWorlPosition(position));
-
+       factoryManager.Create<BuildingBase>(new[] { _selectedBuilding })
+            .Build(ServiceLocator.Get<GridManager>().GetCellFromWorlPosition(position));
         Destroy(_previewInstance);
         _previewInstance = null;
         _selectedBuilding = null;

@@ -30,6 +30,22 @@ namespace A_Pathfinding.Pathfinding
             Node targetNode = grid.NodeFromWorldPoint(request.pathEnd);
             startNode.parent = startNode;
 
+            if (!targetNode.walkable)
+            {
+                // 1) If the target node is unwalkable, find a replacement
+                Node closestWalkable = grid.FindClosestWalkableNode(targetNode);
+                if (closestWalkable != null)
+                {
+                    targetNode = closestWalkable;
+                }
+                else
+                {
+                    // If no walkable node found, path fails immediately
+                    // callback with failure or return
+                    callback(new PathResult(new Vector3[0], false, request.callback));
+                    return;
+                }
+            }
 
             if (startNode.walkable && targetNode.walkable)
             {

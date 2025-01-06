@@ -19,7 +19,7 @@ namespace A_Pathfinding.Test
         private Camera mainCamera;
         [SerializeField]private GameObject clickPointPrefab;
        
-        // ------ Building Placement -----
+        // ------ BuildingBase Placement -----
         public List<BuildingData> Buildings;
         private BuildingData selectedBuildingPrefab;
         private int buildIndex = 0;

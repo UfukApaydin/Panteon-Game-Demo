@@ -57,7 +57,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: 70cfb35851cceae40ad10cb56ec7f21d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -98,7 +98,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1724068046380614960}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c3595d0ae5a5dce4f90e9f70a43214dc, type: 3}
+  m_Script: {fileID: 11500000, guid: 40346e336260ea545a0cac01309b2055, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   onSelect:
@@ -108,6 +108,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   _isBuildingConstructed: 0
+  unitData: {fileID: 11400000, guid: fd251da30f7b5814f847d943893a89bc, type: 2}
 --- !u!61 &4783684831887479763
 BoxCollider2D:
   m_ObjectHideFlags: 0

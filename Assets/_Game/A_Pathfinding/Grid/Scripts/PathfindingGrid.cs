@@ -83,6 +83,47 @@ namespace A_Pathfinding.Nodes
             return neighbours;
         }
 
+        public Node FindClosestWalkableNode(Node startNode)
+        {
+            // If the node is already walkable, just return it
+            if (startNode.walkable)
+            {
+                return startNode;
+            }
+
+            // Typical BFS data structures
+            Queue<Node> queue = new Queue<Node>();
+            HashSet<Node> visited = new HashSet<Node>();
+
+            // Begin from the 'startNode' (which is unwalkable),
+            // and search outward until we find a walkable node.
+            queue.Enqueue(startNode);
+            visited.Add(startNode);
+
+            while (queue.Count > 0)
+            {
+                Node current = queue.Dequeue();
+
+                // Check neighbors
+                foreach (Node neighbor in GetNeighbours(current))
+                {
+                    if (!visited.Contains(neighbor))
+                    {
+                        // If neighbor is walkable, return immediately
+                        if (neighbor.walkable)
+                        {
+                            return neighbor;
+                        }
+                        // Otherwise keep searching
+                        queue.Enqueue(neighbor);
+                        visited.Add(neighbor);
+                    }
+                }
+            }
+
+            // If we exhaust the BFS and find no walkable node, return null
+            return null;
+        }
 
         public Node NodeFromWorldPoint(Vector3 worldPosition)
         {

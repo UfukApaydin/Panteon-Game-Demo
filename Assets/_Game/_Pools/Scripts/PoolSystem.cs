@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.Pool;
 
-namespace SelectionSystem.Marker
+namespace ObjectPoolSystem
 {
     [CreateAssetMenu(fileName = "PoolSystem", menuName = "Scriptable Objects/PoolSystem")]
 
@@ -15,7 +15,7 @@ namespace SelectionSystem.Marker
         [SerializeReference] private int _maxPoolSize = 100;
 
         private ObjectPool<IPoolable> _pool;
-        private Transform _markerPoolParent;
+        private Transform _poolParent;
 
         private void OnValidate()
         {
@@ -29,11 +29,11 @@ namespace SelectionSystem.Marker
         {
             if (_pool == null)
             {
-                _markerPoolParent = new GameObject($"{pooledObj.name} Pool").transform;
+                _poolParent = new GameObject($"{pooledObj.name} Pool").transform;
                 _pool = new ObjectPool<IPoolable>(() =>
                 {
-                    var obj = Instantiate(poolableObj.GameObject, _markerPoolParent).GetComponent<IPoolable>();
-                    obj.Construct(this);
+                    var obj = Instantiate(poolableObj.GameObject, _poolParent).GetComponent<IPoolable>();
+                    obj.Init(this);
                     return obj;
                 },
                  poolObject => { poolObject.Activate(); },
@@ -44,24 +44,16 @@ namespace SelectionSystem.Marker
             }
         }
 
-        public IPoolable GetMarker()
+        public IPoolable Get()
         {
             return _pool.Get();
         }
 
-        public void ReturnMarker(IPoolable marker)
+        public void Return(IPoolable poolObj)
         {
-            _pool.Release(marker);
+            _pool.Release(poolObj);
         }
 
-    }
-
-    public interface IPoolable
-    {
-        public GameObject GameObject { get; }
-        public void Construct(PoolSystem poolSystem);
-        public void Activate();
-        public void Deactivate();
     }
 
 

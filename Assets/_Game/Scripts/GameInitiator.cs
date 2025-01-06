@@ -10,14 +10,7 @@ public class GameInitiator : MonoBehaviour
 
     [Header("From Scene")]
     public BuildingPlacementView buildingPlacementView;
-
-
-    //[Header("Settings")]
-    //[Header("Grid")]
-    //public Vector2Int gridWorldSize;
-    //public float nodeRadius;
-    //public LayerMask unwalkableLayerMask;
-
+    public ProductionView productionView;
 
     public static GameInitiator Instance { get; private set; }
 
@@ -33,13 +26,14 @@ public class GameInitiator : MonoBehaviour
 
     private void Init()
     {
+        ServiceLocator.Register(new FactoryManager().InitializeFactories());
         ServiceLocator.Register(new GridManager(gridConfig));
         ServiceLocator.Register(new PathfindingDirector()
             .InitializePathfinding(gridConfig));
         ServiceLocator.Register(new BuildingPlacementController.Builder()
             .WithBuildings(buildSystemConfig.buildingDatas)
             .BuildAndStart(buildingPlacementView, buildSystemConfig));
-
+        ServiceLocator.Register(new ProductionController(productionView));
     }
 
 }

@@ -1,7 +1,8 @@
+using ObjectPoolSystem;
+using SelectionSystem.Marker;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using SelectionSystem.Marker;
 
 namespace SelectionSystem
 {
@@ -25,7 +26,7 @@ namespace SelectionSystem
         {
             if (_selectionMarkerPool == null)
             {
-              
+
                 throw new InvalidOperationException("SelectionMarkerPool cannot be null");
             }
             else
@@ -50,7 +51,7 @@ namespace SelectionSystem
 
             if (Input.GetMouseButtonDown(0) && Input.GetKey(KeyCode.LeftAlt)) // Drag box start
             {
-                
+
                 _selectionStrategy = new RectangleSelectionStrategy(_rectangleDrawer);
                 //       _selectionStrategy = new RectangleSelectionStrategy();
                 _selectionStrategy.Select(this);
@@ -77,7 +78,7 @@ namespace SelectionSystem
 
             {
                 _selectedObjects.Add(selectable);
-                selectable.Select(_selectionMarkerPool.GetMarker() as SelectionMarker);
+                selectable.Select(_selectionMarkerPool.Get() as SelectionMarker);
             }
         }
 
@@ -85,29 +86,51 @@ namespace SelectionSystem
 
         private void ExecuteCommand()
         {
+
             RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
+            Vector3 targetPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-            if (hit.collider != null)
+            ICommandStrategy command = hit.collider != null && hit.collider.GetComponent<ISelectable>() != null
+                ? new AttackCommand()
+                : new MoveCommand();
+
+            foreach (var obj in _selectedObjects)
             {
-                if (_selectedObjects.Count > 0)
-                {
-                    foreach (var obj in _selectedObjects)
-                    {
-                        obj.Execute(hit.point);
-                    }
-                }
+                command.Execute(obj, hit, targetPoint);
             }
-            //Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            //if (Physics.Raycast(ray, out RaycastHit hit))
-            //{
-            // //   ICommand command = DetermineCommand(hit.point);
-            //    command?.Execute(hit.point);
-            //}
         }
+    }
 
-        //public interface ICommand
-        //{
-        //    public void Execute(Vector3 positon);
-        //}
+
+    public interface ICommandStrategy
+    {
+        void Execute(ISelectable source, RaycastHit2D hit, Vector3 targetPoint);
+    }
+
+    public class AttackCommand : ICommandStrategy
+    {
+        public void Execute(ISelectable source, RaycastHit2D hit, Vector3 targetPoint)
+        {
+            if (hit.collider != null && hit.collider.TryGetComponent<ISelectable>(out var target))
+            {
+              
+                if (source is IAttacker)
+                    (source as IAttacker).Attack(hit.transform.gameObject);
+            }
+            else
+            {
+                Debug.LogWarning("AttackCommand executed, but no valid target was found.");
+            }
+        }
+    }
+
+    public class MoveCommand : ICommandStrategy
+    {
+        public void Execute(ISelectable source, RaycastHit2D hit, Vector3 targetPoint)
+        {
+            source.Execute(targetPoint);
+        }
     }
 }
+
+
