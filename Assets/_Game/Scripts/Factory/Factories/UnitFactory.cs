@@ -1,16 +1,24 @@
 using System.Threading.Tasks;
 using UnityEngine;
 using Game.Unit;
+using ObjectPoolSystem;
 public class UnitFactory : BaseFactory<UnitBase>
-{
+{/// <summary>
+///  0 - PoolSystem
+///  1 - UnitData
+///  2 - Vector3 spawnPosition
+/// </summary>
+/// <param name="args"></param>
+/// <returns></returns>
     public override UnitBase Create(params object[] args)
     {
-        UnitData config = args[0].VerifyType<UnitData>();
+        PoolSystem poolSystem =args[0].VerifyType<PoolSystem>();
+        UnitData config = args[1].VerifyType<UnitData>();
 
-        GameObject unit = Object.Instantiate(config.prefab);
-        UnitBase unitComponent = unit.GetComponent<UnitBase>();
-        unitComponent.Init(config);
-        return unitComponent;
+        poolSystem.Init();
+        IPoolable poolableObj = poolSystem.Get();
+        poolableObj.UpdateArgs(config, args[2]);
+        return poolableObj.GameObject.GetComponent<UnitBase>();
     }
 
     

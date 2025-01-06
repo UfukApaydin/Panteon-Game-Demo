@@ -1,6 +1,6 @@
 using System;
 
-namespace A_Pathfinding.Tools
+namespace AStarPathfinding
 {
     public class Heap<T> where T : IHeapItem<T>
     {

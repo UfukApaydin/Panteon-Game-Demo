@@ -111,11 +111,11 @@ namespace SelectionSystem
     {
         public void Execute(ISelectable source, RaycastHit2D hit, Vector3 targetPoint)
         {
-            if (hit.collider != null && hit.collider.TryGetComponent<ISelectable>(out var target))
+            if (hit.collider != null && hit.collider.TryGetComponent<IAttackable>(out var target))
             {
               
                 if (source is IAttacker)
-                    (source as IAttacker).Attack(hit.transform.gameObject);
+                    (source as IAttacker).Attack(target);
             }
             else
             {
@@ -128,7 +128,7 @@ namespace SelectionSystem
     {
         public void Execute(ISelectable source, RaycastHit2D hit, Vector3 targetPoint)
         {
-            source.Execute(targetPoint);
+            source.Command(targetPoint);
         }
     }
 }

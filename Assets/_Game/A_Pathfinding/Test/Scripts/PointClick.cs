@@ -1,10 +1,10 @@
-using A_Pathfinding.Pathfinding;
+using AStarPathfinding;
 using System.Collections.Generic;
 using System.Linq;
 using GridSystem;
 using UnityEngine;
 
-namespace A_Pathfinding.Test
+namespace AStarPathfinding
 {
     public class PointClick : MonoBehaviour
     {

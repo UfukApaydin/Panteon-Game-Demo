@@ -1,4 +1,4 @@
-using A_Pathfinding.Pathfinding;
+using AStarPathfinding;
 using GridSystem;
 using UnityEngine;
 

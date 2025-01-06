@@ -1,15 +1,16 @@
-using A_Pathfinding.Pathfinding;
-using Cysharp.Threading.Tasks;
+using AStarPathfinding;
 using Game.Unit;
 using GridSystem;
 using SelectionSystem;
 using SelectionSystem.Marker;
+using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public abstract class BuildingBase : MonoBehaviour, ISelectable
+
+public abstract class BuildingBase : MonoBehaviour, IAttackable
 {
 
     public UnityEvent onSelect;
@@ -17,17 +18,20 @@ public abstract class BuildingBase : MonoBehaviour, ISelectable
     public BuildingData Data { get; private set; }
     public Action<int> OnHealthChange;
 
+
     [SerializeField] private bool _isBuildingConstructed = false;
     private List<Vector2Int> _cellPositions;
     private SelectionMarker _marker;
     private int _currentHealth;
     protected Waypoint _waypoint;
 
+    public GameObject Owner => gameObject;
+    public Vector2 Objectsize => Data.size;
     public void Init(BuildingData config)
     {
         Data = config;
         CurrentHealth = config.maxHealth;
-    
+
     }
     public void Build(Cell cell)
     {
@@ -46,7 +50,7 @@ public abstract class BuildingBase : MonoBehaviour, ISelectable
         _isBuildingConstructed = true;
     }
     /// <summary>
-    /// Gets occupied _cells and update pathfinding grid _cells.
+    /// Gets occupied _cells and update _pathfinding _grid _cells.
     /// </summary>
     /// <param name="cell">Lower left corner cell of the building</param>
     private void UpdatePatfindingCells(Cell cell)
@@ -75,9 +79,11 @@ public abstract class BuildingBase : MonoBehaviour, ISelectable
 
         }
     }
+
+   
     #region UI
     public abstract void Produce(UnitData unitData);
-    
+
     #endregion
 
     #region Selection System
@@ -90,7 +96,7 @@ public abstract class BuildingBase : MonoBehaviour, ISelectable
         _waypoint?.ActivateWaypoint();
 
         ServiceLocator.Get<ProductionController>().SelectBuilding(this);
-       
+
     }
     public void Deselect()
     {
@@ -104,9 +110,19 @@ public abstract class BuildingBase : MonoBehaviour, ISelectable
 
     }
 
-    public void Execute(Vector3 positon)
+    public void Command(Vector3 positon)
     {
         _waypoint?.MoveWaypoint(ServiceLocator.Get<GridManager>().GetSnapPosition(positon));
+    }
+
+    public void TakeDamage(int damage)
+    {
+        _currentHealth -= damage;
+        if (_currentHealth <= 0)
+        {
+            Destroy(gameObject);
+        }
+
     }
     #endregion
 }

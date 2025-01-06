@@ -1,46 +1,42 @@
-using A_Pathfinding.Nodes;
-using A_Pathfinding.Tools;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using UnityEngine;
-using PathfindingGrid = A_Pathfinding.Nodes.PathfindingGrid;
 
-namespace A_Pathfinding.Pathfinding
+
+namespace AStarPathfinding
 {
-    public class Pathfinding 
+    public class Pathfinding
     {
-        PathfindingGrid grid;
+        private PathfindingGrid _grid;
 
-        public Pathfinding (PathfindingGrid grid)
+        public Pathfinding(PathfindingGrid grid)
         {
-            this.grid = grid;
+            _grid = grid;
         }
         public void FindPath(PathRequest request, Action<PathResult> callback)
         {
 
-            //Stopwatch sw = new Stopwatch();
-//            sw.Start();
-
             Vector3[] waypoints = new Vector3[0];
             bool pathSuccess = false;
 
-            Node startNode = grid.NodeFromWorldPoint(request.pathStart);
-            Node targetNode = grid.NodeFromWorldPoint(request.pathEnd);
+            Node startNode = _grid.NodeFromWorldPoint(request.pathStart);
+            Node targetNode = _grid.NodeFromWorldPoint(request.pathEnd);
             startNode.parent = startNode;
 
-            if (!targetNode.walkable)
+
+            if (targetNode.IsOccupied() && targetNode.occupiedAgent != request.requestedAgent)
             {
-                // 1) If the target node is unwalkable, find a replacement
-                Node closestWalkable = grid.FindClosestWalkableNode(targetNode);
+                
+                Node closestWalkable = _grid.FindClosestWalkableNode(targetNode);
+
                 if (closestWalkable != null)
                 {
                     targetNode = closestWalkable;
+
                 }
                 else
                 {
-                    // If no walkable node found, path fails immediately
+                    // If no walkable node found, _path fails immediately
                     // callback with failure or return
                     callback(new PathResult(new Vector3[0], false, request.callback));
                     return;
@@ -49,7 +45,7 @@ namespace A_Pathfinding.Pathfinding
 
             if (startNode.walkable && targetNode.walkable)
             {
-                Heap<Node> openSet = new Heap<Node>(grid.MaxSize);
+                Heap<Node> openSet = new Heap<Node>(_grid.MaxSize);
                 HashSet<Node> closedSet = new HashSet<Node>();
                 openSet.Add(startNode);
 
@@ -60,13 +56,13 @@ namespace A_Pathfinding.Pathfinding
 
                     if (currentNode == targetNode)
                     {
-                  //      sw.Stop();
+                        //      sw.Stop();
                         //print ("Path found: " + sw.ElapsedMilliseconds + " ms");
                         pathSuccess = true;
                         break;
                     }
 
-                    foreach (Node neighbour in grid.GetNeighbours(currentNode))
+                    foreach (Node neighbour in _grid.GetNeighbours(currentNode))
                     {
                         if (!neighbour.walkable || closedSet.Contains(neighbour))
                         {
@@ -90,6 +86,8 @@ namespace A_Pathfinding.Pathfinding
             }
             if (pathSuccess)
             {
+                startNode.ReleaseNode(request.requestedAgent);
+                targetNode.TryOccupyNode(request.requestedAgent);
                 waypoints = RetracePath(startNode, targetNode);
                 pathSuccess = waypoints.Length > 0;
             }
@@ -119,18 +117,18 @@ namespace A_Pathfinding.Pathfinding
             List<Vector3> waypoints = new List<Vector3>();
             Vector2 directionOld = Vector2.zero;
 
-            if (path.Count == 1) // On 1 cell movement this ensures the path still exist.
+            if (path.Count == 1) // On 1 cell movement this ensures the _path still exist.
             {
                 waypoints.Add(path[0].worldPosition);
             }
-           
+
             for (int i = 1; i < path.Count; i++)
             {
 
                 Vector2 directionNew = new Vector2(path[i - 1].gridX - path[i].gridX, path[i - 1].gridY - path[i].gridY);
                 if (directionNew != directionOld)
                 {
-                    waypoints.Add(path[i-1].worldPosition);
+                    waypoints.Add(path[i - 1].worldPosition);
                 }
                 directionOld = directionNew;
             }

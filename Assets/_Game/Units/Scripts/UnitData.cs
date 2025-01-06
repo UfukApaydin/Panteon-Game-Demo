@@ -10,12 +10,14 @@ namespace Game.Unit
         public string unitName;
         public int health;
         public float speed;
-        public float damage;
+        public int attackDamage;
         public float attackSpeed;
+        public float attackRange;
    
 
         [Header("Visuals")]
         public GameObject prefab;
-        public Sprite viusual;
+        public Sprite rankVisual;
+        public Sprite icon;
     }
 }

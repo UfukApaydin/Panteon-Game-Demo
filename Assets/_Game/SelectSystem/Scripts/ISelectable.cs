@@ -6,15 +6,20 @@ namespace SelectionSystem
 {
     public interface ISelectable
     {
-
+        GameObject Owner { get; }
         void Select(SelectionMarker selectionMarker);
         void Deselect();
-        void Execute(Vector3 positon);
+        void Command(Vector3 positon);
     
     }
 
-    public interface IAttacker : ISelectable
+    public interface IAttackable : ISelectable
     {
-        void Attack(GameObject target);
+        Vector2 Objectsize { get; }
+        void TakeDamage(int damage);
+    }
+    public interface IAttacker : IAttackable
+    {
+        void Attack(IAttackable target);
     }
 }

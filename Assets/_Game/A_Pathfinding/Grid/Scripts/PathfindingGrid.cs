@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace A_Pathfinding.Nodes
+namespace AStarPathfinding
 {
     public class PathfindingGrid 
     {
@@ -86,7 +86,7 @@ namespace A_Pathfinding.Nodes
         public Node FindClosestWalkableNode(Node startNode)
         {
             // If the node is already walkable, just return it
-            if (startNode.walkable)
+            if (!startNode.IsOccupied())
             {
                 return startNode;
             }
@@ -110,7 +110,7 @@ namespace A_Pathfinding.Nodes
                     if (!visited.Contains(neighbor))
                     {
                         // If neighbor is walkable, return immediately
-                        if (neighbor.walkable)
+                        if (!neighbor.IsOccupied())
                         {
                             return neighbor;
                         }

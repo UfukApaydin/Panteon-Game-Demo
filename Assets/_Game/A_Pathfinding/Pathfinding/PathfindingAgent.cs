@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-namespace A_Pathfinding.Pathfinding
+namespace AStarPathfinding
 {
     public class PathfindingAgent : MonoBehaviour
     {
@@ -10,13 +10,23 @@ namespace A_Pathfinding.Pathfinding
 
         public Vector3 target;
         public float speed = 20;
-        public float turnSpeed = 3;
-        public float turnDst = 5;
-        public float stoppingDst = 10;
+        public float turnSpeed = 50;
 
-        private int targetIndex;
-        Vector3[] path;
-
+        private int _targetIndex;
+        private Vector3[] _path;
+        private bool _isMoving = false;
+        private void OnEnable()
+        {
+            _isMoving = false;   
+        }
+        private void OnDestroy()
+        {
+            PathRequestManager.ReleaseNode(this);
+        }
+        private void OnDisable()
+        {
+            PathRequestManager.ReleaseNode(this);
+        }
         public void MoveToPosition(Vector3 targetPosition)
         {
             target = targetPosition;
@@ -25,71 +35,79 @@ namespace A_Pathfinding.Pathfinding
 
         public void UpdatePath()
         {
-            PathRequestManager.RequestPath(new PathRequest(transform.position, target, OnPathFound));
+            PathRequestManager.RequestPath(new PathRequest(this, transform.position, target, OnPathFound));
         }
         public void OnPathFound(Vector3[] newPath, bool pathSuccessful)
         {
             if (pathSuccessful)
             {
-                path = newPath;
-                targetIndex = 0;
-                StopCoroutine("FollowPath");
-                StartCoroutine("FollowPath");
+                _path = newPath;
+                _targetIndex = 0;
+                StopCoroutine(nameof(FollowPath));
+                StartCoroutine(nameof(FollowPath));
             }
         }
-
         IEnumerator FollowPath()
         {
-            Vector3 currentWaypoint = path[0];
+            Vector3 currentWaypoint = _path[0];
 
             while (true)
             {
                 if (transform.position == currentWaypoint)
                 {
-                    targetIndex++;
-                    if (targetIndex >= path.Length)
+                    _targetIndex++;
+                    if (_targetIndex >= _path.Length)
                     {
+                        _isMoving = false;
                         yield break;
                     }
-                    currentWaypoint = path[targetIndex];
+                    currentWaypoint = _path[_targetIndex];
                 }
 
+
+                LerpRotateToTarget(currentWaypoint);
+
                 transform.position = Vector3.MoveTowards(transform.position, currentWaypoint, speed * Time.deltaTime);
+                _isMoving = true;
                 yield return null;
 
             }
         }
 
+        public bool IsMoving { get { return _isMoving; } }
+        public void LerpRotateToTarget(Vector3 targetPositon)
+        {
+            Vector3 direction = (targetPositon - transform.position).normalized;
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle);
+            transform.rotation = Quaternion.Lerp(transform.rotation,targetRotation,Time.deltaTime * turnSpeed);
+        }
+        public void SetRotationToTarget(Vector3 targetPositon)
+        {
+            Vector3 direction = (targetPositon - transform.position).normalized;
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            transform.rotation = Quaternion.Euler(0f, 0f, angle);
+        }
         public void OnDrawGizmos()
         {
-            if (path != null)
+            if (_path != null)
             {
-                for (int i = targetIndex; i < path.Length; i++)
+                for (int i = _targetIndex; i < _path.Length; i++)
                 {
                     Gizmos.color = Color.black;
-                    Gizmos.DrawCube(path[i], Vector3.one);
+                    Gizmos.DrawCube(_path[i], Vector3.one);
 
-                    if (i == targetIndex)
+                    if (i == _targetIndex)
                     {
-                        Gizmos.DrawLine(transform.position, path[i]);
+                        Gizmos.DrawLine(transform.position, _path[i]);
                     }
                     else
                     {
-                        Gizmos.DrawLine(path[i - 1], path[i]);
+                        Gizmos.DrawLine(_path[i - 1], _path[i]);
                     }
                 }
             }
         }
-        //public void OnPathFound(Vector3[] waypoints, bool pathSuccessful)
-        //{
-        //    if (pathSuccessful)
-        //    {
-        //        path = new Path(waypoints, transform.position, turnDst, stoppingDst);
-
-        //        StopCoroutine("FollowPath");
-        //        StartCoroutine("FollowPath");
-        //    }
-        //}
 
         //IEnumerator UpdatePath()
         //{
@@ -115,63 +133,6 @@ namespace A_Pathfinding.Pathfinding
         //    }
         //}
 
-        //IEnumerator FollowPath()
-        //{
-
-        //    bool followingPath = true;
-        //    int pathIndex = 0;
-        //    transform.LookAt(path.lookPoints[0]);
-
-        //    float speedPercent = 1;
-
-        //    while (followingPath)
-        //    {
-        //        Vector2 pos2D = new Vector2(transform.position.x, transform.position.y);
-        //        while (path.turnBoundaries[pathIndex].HasCrossedLine(pos2D))
-        //        {
-        //            if (pathIndex == path.finishLineIndex)
-        //            {
-        //                followingPath = false;
-        //                break;
-        //            }
-        //            else
-        //            {
-        //                pathIndex++;
-        //            }
-        //        }
-
-        //        if (followingPath)
-        //        {
-
-        //            if (pathIndex >= path.slowDownIndex && stoppingDst > 0)
-        //            {
-        //                speedPercent = Mathf.Clamp01(path.turnBoundaries[path.finishLineIndex].DistanceFromPoint(pos2D) / stoppingDst);
-        //                if (speedPercent < 0.01f)
-        //                {
-        //                    followingPath = false;
-        //                }
-        //            }
-
-        //            //Quaternion targetRotation = Quaternion.LookRotation(path.lookPoints[pathIndex] - transform.position);
-        //            //transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * turnSpeed);
-        //            //transform.Translate(Vector3.forward * Time.deltaTime * speed * speedPercent, Space.Self);
-
-        //            Vector3 nextWaypoint = path.lookPoints[pathIndex];
-        //            Vector2 direction2D = new Vector2(nextWaypoint.x - transform.position.x,
-        //                                              nextWaypoint.y - transform.position.y).normalized;
-        //            float angle = Mathf.Atan2(direction2D.y, direction2D.x) * Mathf.Rad2Deg - 90f;
-
-        //            Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle);
-        //            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * turnSpeed);
-
-        //            // 4) Move forward (local up in 2D)
-        //            transform.Translate(Vector3.up * speed * speedPercent * Time.deltaTime, Space.Self);
-        //        }
-
-        //        yield return null;
-
-        //    }
-        //}
 
 
     }

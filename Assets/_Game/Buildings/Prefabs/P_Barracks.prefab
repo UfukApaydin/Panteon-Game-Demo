@@ -108,7 +108,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   _isBuildingConstructed: 0
-  unitData: {fileID: 11400000, guid: fd251da30f7b5814f847d943893a89bc, type: 2}
+  soldierPoolSystem: {fileID: 11400000, guid: e1efe4d94e4d1b64e8212b6b6658b9e3, type: 2}
 --- !u!61 &4783684831887479763
 BoxCollider2D:
   m_ObjectHideFlags: 0

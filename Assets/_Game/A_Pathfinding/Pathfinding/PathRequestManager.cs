@@ -3,19 +3,22 @@ using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 
-namespace A_Pathfinding.Pathfinding
+namespace AStarPathfinding
 {
     public class PathRequestManager : MonoBehaviour
     {
+  
         Queue<PathResult> results = new Queue<PathResult>();
 
         static PathRequestManager instance;
-        Pathfinding pathfinding;
+        private Pathfinding _pathfinding;
+        private PathfindingGrid _grid;
+
 
         void Awake()
         {
             instance = this;
-            // pathfinding = GetComponent<Pathfinding>();
+            // _pathfinding = GetComponent<Pathfinding>();
         }
 
         void Update()
@@ -38,7 +41,7 @@ namespace A_Pathfinding.Pathfinding
         {
             ThreadStart threadStart = delegate
             {
-                instance.pathfinding.FindPath(request, instance.FinishedProcessingPath);
+                instance._pathfinding.FindPath(request, instance.FinishedProcessingPath);
             };
             threadStart.Invoke();
         }
@@ -50,15 +53,20 @@ namespace A_Pathfinding.Pathfinding
                 results.Enqueue(result);
             }
         }
+        public static void ReleaseNode(PathfindingAgent agent)
+        {
+            instance._grid.NodeFromWorldPoint(agent.transform.position).ReleaseNode(agent);
+        }
 
 
         #region Builder
         public class Builder
         {   
-            public PathRequestManager Build(Pathfinding pathfinding)
+            public PathRequestManager Build(Pathfinding pathfinding, PathfindingGrid grid)
             {
                 PathRequestManager manager = new GameObject("PathRequestManager").AddComponent<PathRequestManager>();
-                manager.pathfinding = pathfinding;
+                manager._pathfinding = pathfinding;
+                manager._grid = grid;
                 return manager;
             }
         }
@@ -82,17 +90,20 @@ namespace A_Pathfinding.Pathfinding
 
     public struct PathRequest
     {
+        public PathfindingAgent requestedAgent;
         public Vector3 pathStart;
         public Vector3 pathEnd;
         public Action<Vector3[], bool> callback;
 
-        public PathRequest(Vector3 _start, Vector3 _end, Action<Vector3[], bool> _callback)
+        public PathRequest(PathfindingAgent requestedAgent,Vector3 start, Vector3 end, Action<Vector3[], bool> callback)
         {
-            pathStart = _start;
-            pathEnd = _end;
-            callback = _callback;
+            this.requestedAgent = requestedAgent;
+            pathStart = start;
+            pathEnd = end;
+            this.callback = callback;
         }
 
     }
+
 
 }
