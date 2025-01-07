@@ -9,20 +9,25 @@ public class GameInitiator : MonoBehaviour
     public BuildSystemConfig buildSystemConfig;
 
     [Header("From Scene")]
-    public BuildingPlacementView buildingPlacementView;
-    public ProductionView productionView;
+    public ProductionView buildingPlacementView;
+    public InfoView productionView;
 
     public static GameInitiator Instance { get; private set; }
 
     private void Awake()
     {
+        if (Instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
         Instance = this;
+
     }
     public void Start()
     {
         Init();
     }
-
 
     private void Init()
     {
@@ -30,10 +35,11 @@ public class GameInitiator : MonoBehaviour
         ServiceLocator.Register(new GridManager(gridConfig));
         ServiceLocator.Register(new PathfindingDirector()
             .InitializePathfinding(gridConfig));
-        ServiceLocator.Register(new BuildingPlacementController.Builder()
+        ServiceLocator.Register(new ProductionController.Builder()
             .WithBuildings(buildSystemConfig.buildingDatas)
             .BuildAndStart(buildingPlacementView, buildSystemConfig));
-        ServiceLocator.Register(new ProductionController(productionView));
+        ServiceLocator.Register(new InfoController(productionView));
+    
     }
 
 }

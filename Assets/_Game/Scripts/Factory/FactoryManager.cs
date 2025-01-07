@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class FactoryManager
 {
-   
     private readonly Dictionary<Type, object> _factories = new();
 
-    public void RegisterFactory< T>(BaseFactory<T> factory) where T : UnityEngine.Object
+    public void RegisterFactory<T>(BaseFactory<T> factory) where T : UnityEngine.Object
     {
         var type = typeof(T);
 

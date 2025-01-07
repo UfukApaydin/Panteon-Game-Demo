@@ -6,7 +6,7 @@ public class BuildingPreviewFactory : BaseFactory<BuildingPreview>
     {
         BuildingData config = args[0].VerifyType<BuildingData>();
 
-        var previewObj = new GameObject($"{config.buildingName}_Preview");
+        var previewObj = new GameObject($"{config.dataName}_Preview");
         var preview = previewObj.AddComponent<BuildingPreview>();
         var renderer = previewObj.AddComponent<SpriteRenderer>();
 

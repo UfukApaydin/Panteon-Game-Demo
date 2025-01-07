@@ -9,9 +9,30 @@ public class Barracks : BuildingBase
     public PoolSystem soldierPoolSystem;
 
     private PathfindingGrid Grid => ServiceLocator.Get<PathfindingDirector>().grid;
-    // public UnitData unitData;
+    // public UnitData buildingDatas;
     private FactoryManager _factoryManager => ServiceLocator.Get<FactoryManager>();
-    [ContextMenu(nameof(Produce))]
+    private ProductionController _buildingPlacementController => ServiceLocator.Get<ProductionController>();
+
+    public override void ConstructionComplete()
+    {
+        foreach (UnitData unitData in Data.unitDatas)
+        {
+            unitData.BuildUnitGlobally += Produce;
+        }
+        _buildingPlacementController.activeBuildings.RegisterBuilding<Barracks>(this);
+
+
+    }
+    public override void DestroyBuilding()
+    {
+        foreach (UnitData unitData in Data.unitDatas)
+        {
+            unitData.BuildUnitGlobally -= Produce;
+        }
+        _buildingPlacementController.activeBuildings.RemoveBuilding<Barracks>(this);
+        Destroy(gameObject);
+    }
+
     public override async void Produce(UnitData unitData)
     {
         Vector3 spawnPosition = Grid.FindClosestWalkableNode(Grid.NodeFromWorldPoint(transform.position)).worldPosition;

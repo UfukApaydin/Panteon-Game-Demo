@@ -1,13 +1,14 @@
+using System;
 using UnityEngine;
 
 
 namespace Game.Unit
 {
     [CreateAssetMenu(fileName = "UnitData", menuName = "Scriptable Objects/Units/UnitData")]
-    public class UnitData : ScriptableObject
+    public class UnitData : Data
     {
         [Header("Config")]
-        public string unitName;
+       // public string dataName;
         public int health;
         public float speed;
         public int attackDamage;
@@ -18,6 +19,8 @@ namespace Game.Unit
         [Header("Visuals")]
         public GameObject prefab;
         public Sprite rankVisual;
-        public Sprite icon;
+       // public Texture icon;
+
+        public Action<UnitData> BuildUnitGlobally;
     }
 }

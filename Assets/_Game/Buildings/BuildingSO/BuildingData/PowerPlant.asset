@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8f89f12b94559446bf0fac95fafe010, type: 3}
   m_Name: PowerPlant
   m_EditorClassIdentifier: 
-  buildingName: Power Plant
+  dataName: PowerPlant
+  icon: {fileID: 2800000, guid: b514c51169b44bc418998902db877d89, type: 3}
   maxHealth: 50
   size: {x: 2, y: 3}
   buildTime: 0
@@ -21,5 +22,4 @@ MonoBehaviour:
   placementConfig: {fileID: 11400000, guid: 2ff6b4e85cd9221458b295cebd8c6bd3, type: 2}
   prefab: {fileID: 1724068046380614960, guid: 8c02d50c3456a8b44a81389ae139cbbc, type: 3}
   visual: {fileID: 21300000, guid: b514c51169b44bc418998902db877d89, type: 3}
-  icon: {fileID: 2800000, guid: b514c51169b44bc418998902db877d89, type: 3}
   waypointPool: {fileID: 11400000, guid: 4aa4ec1a5d1d0f1468282af3923ff93d, type: 2}

@@ -13,12 +13,9 @@ namespace AStarPathfinding
         static PathRequestManager instance;
         private Pathfinding _pathfinding;
         private PathfindingGrid _grid;
-
-
         void Awake()
         {
             instance = this;
-            // _pathfinding = GetComponent<Pathfinding>();
         }
 
         void Update()

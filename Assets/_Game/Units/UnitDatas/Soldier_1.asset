@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c793f865a063ec14d9485a580cb1bb29, type: 3}
   m_Name: Soldier_1
   m_EditorClassIdentifier: 
-  unitName: Soldier 1
+  dataName: Soldier1
+  icon: {fileID: 2800000, guid: cde3fc3359a66a84f8bf7fca18a9830c, type: 3}
   health: 10
   speed: 1
   attackDamage: 10
@@ -20,4 +21,3 @@ MonoBehaviour:
   attackRange: 1
   prefab: {fileID: 6981984485106578510, guid: 14428922888ab6243a1e4fde69f38dc0, type: 3}
   rankVisual: {fileID: 21300000, guid: cde3fc3359a66a84f8bf7fca18a9830c, type: 3}
-  icon: {fileID: 0}

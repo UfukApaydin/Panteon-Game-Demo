@@ -19,14 +19,14 @@ namespace AStarPathfinding
         {
             _isMoving = false;   
         }
-        private void OnDestroy()
-        {
-            PathRequestManager.ReleaseNode(this);
-        }
-        private void OnDisable()
-        {
-            PathRequestManager.ReleaseNode(this);
-        }
+        //private void OnDestroy()
+        //{
+        //    ResetOccupyNode();
+        //}
+        //private void OnDisable()
+        //{
+        //    ResetOccupyNode();
+        //}
         public void MoveToPosition(Vector3 targetPosition)
         {
             target = targetPosition;
@@ -107,6 +107,13 @@ namespace AStarPathfinding
                     }
                 }
             }
+        }
+        /// <summary>
+        /// Removes the occupancy from the node. Use this on destroying the object
+        /// </summary>
+        public void ResetOccupyNode()
+        {
+            PathRequestManager.ReleaseNode(this);
         }
 
         //IEnumerator UpdatePath()

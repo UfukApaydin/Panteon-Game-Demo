@@ -1,76 +1,35 @@
 using Game.Unit;
-using System;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class ProductionView : MonoBehaviour
 {
-    public RawImage buildingImage;
-    public TMP_Text healthText;
-    public TMP_Text buildingNameText;
+    public InfiniteScrollUI InfiniteScrollUI;
+    private ProductionController _productionController;
 
-    public Transform buttonContainer;
-    public GameObject buttonPrefab;
-
-    private ProductionController _controller;
-    private BuildingData _buildingData;
-    private List<GameObject> buttons = new();
-    public void Init(ProductionController productionController)
+    public void Init(ProductionController buildingController)
     {
-        _controller = productionController;
-    }
-
-    public void UpdateView(BuildingData buildingData)
-    {
-        _buildingData = buildingData;
-
-        buildingImage.texture = _buildingData.icon;
-        buildingNameText.text = _buildingData.name;
-
-        PopulateProductionUI();
-    }
-    public void ResetView()
-    {
-        _buildingData = null;
-
-
-        buildingImage.texture = null;
-        buildingNameText.text = string.Empty;
-
-        PopulateProductionUI();
+        _productionController = buildingController;
 
     }
-    private void PopulateProductionUI()
+    public void CreateBuildingButtons(BuildingData[] buildings)
     {
-        if (buttons.Count > 0)
-        {
-            foreach (var button in buttons)
-            {
-                Destroy(button);
-            }
-        }
+        InfiniteScrollUI.SetUIData(new BuildingUIStrategy(_productionController, buildings));
 
-        if (_buildingData != null)
-        {
-            foreach (UnitData unitData in _buildingData.unitDatas)
-            {
-                GameObject buttonInstance = Instantiate(buttonPrefab, buttonContainer);
-                buttonInstance.GetComponentInChildren<TMP_Text>().text = unitData.name;
-                buttonInstance.GetComponent<Button>().onClick.AddListener(() => _controller.StartProduction(unitData));
-
-                buttons.Add(buttonInstance);
-            }
-        }
-      
-    }
-   
-    public void UpdateHealthChange(int health)
-    {
-        healthText.text = health.ToString();
     }
 
+    public void CreateSoldierButtons(UnitData[] units)
+    {
+        InfiniteScrollUI.SetUIData(new UnitUIStrategy(_productionController, units));
+
+    }
+    public void SelectBuildingTab()
+    {
+        _productionController.RequestBuildingData();
+    }
+    public void SelectSoldierTab()
+    {
+        _productionController.RequestSoldierData();
+    }
 }
-
-

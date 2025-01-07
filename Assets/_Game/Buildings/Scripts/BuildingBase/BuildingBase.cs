@@ -1,9 +1,9 @@
 using AStarPathfinding;
+using Cysharp.Threading.Tasks;
 using Game.Unit;
 using GridSystem;
 using SelectionSystem;
 using SelectionSystem.Marker;
-using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -23,6 +23,7 @@ public abstract class BuildingBase : MonoBehaviour, IAttackable
     private List<Vector2Int> _cellPositions;
     private SelectionMarker _marker;
     private int _currentHealth;
+    private Cell originCell;
     protected Waypoint _waypoint;
 
     public GameObject Owner => gameObject;
@@ -32,11 +33,13 @@ public abstract class BuildingBase : MonoBehaviour, IAttackable
         Data = config;
         CurrentHealth = config.maxHealth;
 
+        ServiceLocator.Get<ProductionController>().RegisterProduceableUnitRange(Data.unitDatas);
     }
     public void Build(Cell cell)
     {
+        originCell = cell;
         transform.position = cell.worldPosition + Data.CenterOffset;
-        UpdatePatfindingCells(cell);
+        UpdateGridCells(cell, false);
         _waypoint = Data.canProduceUnit ? new(Data.waypointPool, transform.position, transform.position) : null;
         ConstructBuilding();
     }
@@ -48,24 +51,12 @@ public abstract class BuildingBase : MonoBehaviour, IAttackable
             await UniTask.WaitForSeconds(Data.buildTime, cancellationToken: destroyCancellationToken);
         }
         _isBuildingConstructed = true;
+        ConstructionComplete();
     }
-    /// <summary>
-    /// Gets occupied _cells and update _pathfinding _grid _cells.
-    /// </summary>
-    /// <param name="cell">Lower left corner cell of the building</param>
-    private void UpdatePatfindingCells(Cell cell)
-    {
-        _cellPositions = new();
-        for (int x = 0; x < Data.size.x; x++)
-        {
-            for (int y = 0; y < Data.size.y; y++)
-            {
-                _cellPositions.Add(new Vector2Int(cell.gridX + x, cell.gridY + y));
-            }
-        }
-        ServiceLocator.Get<PathfindingDirector>().grid.UpdateNodesWalkableCell(_cellPositions.ToArray(), false);
+    public abstract void ConstructionComplete();
+    public abstract void DestroyBuilding();
+    public abstract void Produce(UnitData unitData);
 
-    }
     public int CurrentHealth
     {
         get
@@ -79,14 +70,6 @@ public abstract class BuildingBase : MonoBehaviour, IAttackable
 
         }
     }
-
-   
-    #region UI
-    public abstract void Produce(UnitData unitData);
-
-    #endregion
-
-    #region Selection System
     public void Select(SelectionMarker selectionMarker)
     {
 
@@ -95,7 +78,7 @@ public abstract class BuildingBase : MonoBehaviour, IAttackable
         _marker.AttachTo(transform, Vector3.zero, Data.size);
         _waypoint?.ActivateWaypoint();
 
-        ServiceLocator.Get<ProductionController>().SelectBuilding(this);
+        ServiceLocator.Get<InfoController>().SelectBuilding(this);
 
     }
     public void Deselect()
@@ -106,7 +89,7 @@ public abstract class BuildingBase : MonoBehaviour, IAttackable
         _waypoint?.DeactivateWaypoint();
 
 
-        ServiceLocator.Get<ProductionController>().DeselectBuilding(this);
+        ServiceLocator.Get<InfoController>().DeselectBuilding(this);
 
     }
 
@@ -120,9 +103,34 @@ public abstract class BuildingBase : MonoBehaviour, IAttackable
         _currentHealth -= damage;
         if (_currentHealth <= 0)
         {
-            Destroy(gameObject);
+
+            StartDestroyBuilding();
         }
 
     }
-    #endregion
+    private void StartDestroyBuilding()
+    {
+        _waypoint?.DeactivateWaypoint();
+        UpdateGridCells(originCell, true);
+        DestroyBuilding();
+    }
+
+    /// <summary>
+    /// Gets occupied _cells and update _pathfinding _grid _cells.
+    /// </summary>
+    /// <param name="cell">Lower left corner cell of the building</param>
+    private void UpdateGridCells(Cell cell, bool isWalkable)
+    {
+        _cellPositions = new();
+        for (int x = 0; x < Data.size.x; x++)
+        {
+            for (int y = 0; y < Data.size.y; y++)
+            {
+                _cellPositions.Add(new Vector2Int(cell.gridX + x, cell.gridY + y));
+            }
+        }
+        ServiceLocator.Get<PathfindingDirector>().grid.UpdateNodesWalkableCell(_cellPositions.ToArray(), isWalkable);
+
+    }
+
 }

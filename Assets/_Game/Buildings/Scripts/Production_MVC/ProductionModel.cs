@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-public class BuildingPlacementModel 
+public class ProductionModel 
 {
     public List<BuildingData> buildingConfigs = new();
 

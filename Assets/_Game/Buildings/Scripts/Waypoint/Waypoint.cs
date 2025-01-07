@@ -29,8 +29,12 @@ public class Waypoint
     }
     public void DeactivateWaypoint()
     {
-        _waypointPool.Return(_waypointObj);
-        _waypointObj = null;
+        if (_waypointObj != null)
+        {
+            _waypointPool.Return(_waypointObj);
+            _waypointObj = null;
+        }
+       
     }
     public void MoveWaypoint(Vector3 position)
     {

@@ -7,9 +7,13 @@ namespace Game.Unit
     {
         public override void Attack(IAttackable target)
         { 
-         
-            _stateManager?.ChangeState(_stateManager.attackState, target);
-      
+            if(this != target.Owner)
+            {
+                _stateManager?.ChangeState(_stateManager.attackState, target);
+
+            }
+
+
         }
 
         public override void Command(Vector3 position)

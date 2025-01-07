@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace AStarPathfinding
 {
-    public class PathfindingGrid 
+    public class PathfindingGrid
     {
         public bool displayGridGizmos = true;
 
@@ -18,13 +18,11 @@ namespace AStarPathfinding
 
         public int MaxSize => gridSizeX * gridSizeY;
 
-         PathfindingGrid(Vector3 originPosition, Vector2 gridWorldSize, float nodeRadius/*, LayerMask unwalkableMask*/)
+        PathfindingGrid(Vector3 originPosition, Vector2 gridWorldSize, float nodeRadius)
         {
             this.originPosition = originPosition;
             this.gridWorldSize = gridWorldSize;
             this.nodeRadius = nodeRadius;
-          //  this.unwalkableMask = unwalkableMask;
-
             nodeDiameter = nodeRadius * 2;
         }
         public void StartGrid()
@@ -56,7 +54,7 @@ namespace AStarPathfinding
             foreach (Vector2Int cellIndex in cellIndexes)
             {
                 grid[cellIndex.x, cellIndex.y].walkable = isWalkable;
-                Debug.Log($"Cell: {cellIndex.x} : {cellIndex.y}: changed");          
+                Debug.Log($"Cell: {cellIndex.x} : {cellIndex.y}: changed");
             }
         }
         public List<Node> GetNeighbours(Node node, int radius = 1)
@@ -91,7 +89,7 @@ namespace AStarPathfinding
                 return startNode;
             }
 
-            // Typical BFS data structures
+            // BFS data structures
             Queue<Node> queue = new Queue<Node>();
             HashSet<Node> visited = new HashSet<Node>();
 
@@ -166,12 +164,11 @@ namespace AStarPathfinding
         public class Builder
         {
             private Vector3 originPosition = Vector3.zero;
-            private Vector2 gridWorldSize = new Vector2(50,50); 
+            private Vector2 gridWorldSize = new Vector2(50, 50);
             private float nodeRadius = 1;
-            //private LayerMask unwalkableMask;
-
+        
             public Builder SetOriginPosition(Vector3 position)
-            { 
+            {
                 originPosition = position;
                 return this;
             }
@@ -185,14 +182,10 @@ namespace AStarPathfinding
                 nodeRadius = radius;
                 return this;
             }
-            //public Builder SetLayerMask(LayerMask layerMask)
-            //{
-            //    unwalkableMask = layerMask;
-            //    return this;
-            //}
+          
             public PathfindingGrid Build()
             {
-                return new PathfindingGrid(originPosition, gridWorldSize, nodeRadius/*, unwalkableMask*/);
+                return new PathfindingGrid(originPosition, gridWorldSize, nodeRadius);
             }
             public PathfindingGrid BuildAndStart()
             {
@@ -200,7 +193,7 @@ namespace AStarPathfinding
                 pathfindingGrid.StartGrid();
                 return pathfindingGrid;
             }
-                
+
         }
 
         #endregion

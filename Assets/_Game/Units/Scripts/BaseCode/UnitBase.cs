@@ -43,6 +43,7 @@ namespace Game.Unit
         }
         public void KillUnit()
         {
+            Agent.ResetOccupyNode();
             _poolSystem.Return(this);
         }
 

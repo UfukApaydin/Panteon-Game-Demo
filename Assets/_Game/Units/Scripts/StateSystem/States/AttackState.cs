@@ -42,7 +42,7 @@ namespace Game.Unit
                 return;
 
 
-            if (!targetGO || !targetGO.activeSelf)
+            if (targetGO == null || !targetGO.activeSelf)
             {
                 _stateManager.ChangeState(_stateManager.idleState, null);
             }
