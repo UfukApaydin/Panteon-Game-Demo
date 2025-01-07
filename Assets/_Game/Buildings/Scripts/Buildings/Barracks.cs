@@ -19,7 +19,7 @@ public class Barracks : BuildingBase
         {
             unitData.BuildUnitGlobally += Produce;
         }
-        _buildingPlacementController.activeBuildings.RegisterBuilding<Barracks>(this);
+        _buildingPlacementController.activeBuildings.RegisterBuilding/*<Barracks>*/(typeof(Barracks), this);
 
 
     }
@@ -29,7 +29,7 @@ public class Barracks : BuildingBase
         {
             unitData.BuildUnitGlobally -= Produce;
         }
-        _buildingPlacementController.activeBuildings.RemoveBuilding<Barracks>(this);
+        _buildingPlacementController.activeBuildings.RemoveBuilding/*<Barracks>*/(typeof(Barracks), this);
         Destroy(gameObject);
     }
 

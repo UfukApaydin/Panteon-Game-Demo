@@ -42,10 +42,8 @@ namespace AStarPathfinding
                 {
                     Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * nodeDiameter + nodeRadius) + Vector3.up * (y * nodeDiameter + nodeRadius);
                     bool walkable = true;
-                    //   bool walkable  = !(Physics2D.OverlapCircle(worldPoint, nodeRadius, unwalkableMask));
 
-
-                    grid[x, y] = new Node(walkable, worldPoint, x, y/*, movementPenalty*/);
+                    grid[x, y] = new Node(walkable, worldPoint, x, y);
                 }
             }
         }
@@ -54,7 +52,6 @@ namespace AStarPathfinding
             foreach (Vector2Int cellIndex in cellIndexes)
             {
                 grid[cellIndex.x, cellIndex.y].walkable = isWalkable;
-                Debug.Log($"Cell: {cellIndex.x} : {cellIndex.y}: changed");
             }
         }
         public List<Node> GetNeighbours(Node node, int radius = 1)
@@ -166,7 +163,7 @@ namespace AStarPathfinding
             private Vector3 originPosition = Vector3.zero;
             private Vector2 gridWorldSize = new Vector2(50, 50);
             private float nodeRadius = 1;
-        
+
             public Builder SetOriginPosition(Vector3 position)
             {
                 originPosition = position;
@@ -182,7 +179,7 @@ namespace AStarPathfinding
                 nodeRadius = radius;
                 return this;
             }
-          
+
             public PathfindingGrid Build()
             {
                 return new PathfindingGrid(originPosition, gridWorldSize, nodeRadius);

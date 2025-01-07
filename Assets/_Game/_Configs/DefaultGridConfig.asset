@@ -15,4 +15,4 @@ MonoBehaviour:
   originPosition: {x: 0, y: 0, z: 0}
   gridWorldSize: {x: 200, y: 200}
   cellSize: 1
-  drawLines: 1
+  drawLines: 0

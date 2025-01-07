@@ -7,9 +7,9 @@ public class ActiveBuildings
     public Dictionary<Type, List<BuildingBase>> activeBuildings = new();
     public Action<BuildingData> onBuildingTypeAdded;
     public Action<BuildingData> onBuildingTypeRemoved;
-    public void RegisterBuilding<T>(BuildingBase buildingBase)
+    public void RegisterBuilding/*<T>*/(Type type, BuildingBase buildingBase)
     {
-        var type = typeof(T);
+      //  var type = typeof(T);
         if (activeBuildings.ContainsKey(type))
         {
             activeBuildings[type].Add(buildingBase);
@@ -23,9 +23,9 @@ public class ActiveBuildings
         onBuildingTypeAdded?.Invoke(buildingBase.Data);
     }
 
-    public void RemoveBuilding<T>(BuildingBase buildingBase)
+    public void RemoveBuilding(Type type,BuildingBase buildingBase)
     {
-        var type = typeof(T);
+       //var type = typeof(T);
         if (!activeBuildings.ContainsKey(type))
         {
             Debug.Log(" no type found ");

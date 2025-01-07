@@ -1,5 +1,6 @@
 using AStarPathfinding;
 using GridSystem;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class GameInitiator : MonoBehaviour
@@ -13,6 +14,13 @@ public class GameInitiator : MonoBehaviour
     public InfoView productionView;
 
     public static GameInitiator Instance { get; private set; }
+
+    private void OnValidate()
+    {
+        if (gridConfig == null) throw new System.Exception($"{nameof(gridConfig)} is not assigned in {gameObject.name}.");
+
+        if (buildSystemConfig == null) throw new System.Exception($"{nameof(buildSystemConfig)} is not assigned in {gameObject.name}.");
+    }
 
     private void Awake()
     {
@@ -39,7 +47,9 @@ public class GameInitiator : MonoBehaviour
             .WithBuildings(buildSystemConfig.buildingDatas)
             .BuildAndStart(buildingPlacementView, buildSystemConfig));
         ServiceLocator.Register(new InfoController(productionView));
-    
+
+        Camera.main.AddComponent<CameraController>().Init(gridConfig);
+
     }
 
 }

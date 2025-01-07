@@ -16,7 +16,7 @@ public abstract class BuildingBase : MonoBehaviour, IAttackable
     public UnityEvent onSelect;
     public UnityEvent onDeselect;
     public BuildingData Data { get; private set; }
-    public Action<int> OnHealthChange;
+    public Action<int> OnHealthChange { get; set; }
 
 
     [SerializeField] private bool _isBuildingConstructed = false;
@@ -25,7 +25,7 @@ public abstract class BuildingBase : MonoBehaviour, IAttackable
     private int _currentHealth;
     private Cell originCell;
     protected Waypoint _waypoint;
-
+    protected BuildingUIInfo _currentStrategy;
     public GameObject Owner => gameObject;
     public Vector2 Objectsize => Data.size;
     public void Init(BuildingData config)
@@ -70,6 +70,8 @@ public abstract class BuildingBase : MonoBehaviour, IAttackable
 
         }
     }
+
+  
     public void Select(SelectionMarker selectionMarker)
     {
 
@@ -78,7 +80,8 @@ public abstract class BuildingBase : MonoBehaviour, IAttackable
         _marker.AttachTo(transform, Vector3.zero, Data.size);
         _waypoint?.ActivateWaypoint();
 
-        ServiceLocator.Get<InfoController>().SelectBuilding(this);
+        _currentStrategy = new BuildingUIInfo(this);
+        ServiceLocator.Get<InfoController>().SelectEntity(_currentStrategy);
 
     }
     public void Deselect()
@@ -89,7 +92,7 @@ public abstract class BuildingBase : MonoBehaviour, IAttackable
         _waypoint?.DeactivateWaypoint();
 
 
-        ServiceLocator.Get<InfoController>().DeselectBuilding(this);
+        ServiceLocator.Get<InfoController>().DeselectEntity(_currentStrategy);
 
     }
 
@@ -100,14 +103,16 @@ public abstract class BuildingBase : MonoBehaviour, IAttackable
 
     public void TakeDamage(int damage)
     {
-        _currentHealth -= damage;
-        if (_currentHealth <= 0)
+        CurrentHealth -= damage;
+        
+        if (CurrentHealth <= 0)
         {
 
             StartDestroyBuilding();
         }
 
     }
+
     private void StartDestroyBuilding()
     {
         _waypoint?.DeactivateWaypoint();

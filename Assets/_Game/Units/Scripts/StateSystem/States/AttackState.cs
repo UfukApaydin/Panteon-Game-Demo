@@ -45,6 +45,7 @@ namespace Game.Unit
             if (targetGO == null || !targetGO.activeSelf)
             {
                 _stateManager.ChangeState(_stateManager.idleState, null);
+                return;
             }
 
             //Get closest point from bounding box

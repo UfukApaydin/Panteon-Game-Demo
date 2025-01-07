@@ -7,11 +7,11 @@ public class PowerPlant : BuildingBase
 
     public override void ConstructionComplete()
     {
-        _buildingPlacementController.activeBuildings.RegisterBuilding<PowerPlant>(this);
+        _buildingPlacementController.activeBuildings.RegisterBuilding/*<PowerPlant>*/(typeof(PowerPlant) ,this);
     }
     public override void DestroyBuilding()
     {
-        _buildingPlacementController.activeBuildings.RemoveBuilding<PowerPlant>( this);
+        _buildingPlacementController.activeBuildings.RemoveBuilding/*<PowerPlant>*/(typeof(PowerPlant), this);
         Destroy(gameObject);
     }
     public override void Produce(UnitData unitData)

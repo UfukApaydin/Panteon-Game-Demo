@@ -13,16 +13,21 @@ namespace Game.Unit
     {
         public UnityEvent onSelect;
         public UnityEvent onDeselect;
+        public Action<int> OnHealthChange { get;  set; }
         public Transform unitVisual;
         public SpriteRenderer rankSpriteRenderer;
-        public int currentHealth;
+        public UnitData Data { get; private set; }
 
         protected StateManager _stateManager;
-        protected UnitData _unitData;
 
         private PoolSystem _poolSystem;
         private SelectionMarker _marker;
+        private int _currentHealth;
+        private UnitUIInfo _currentStrategy;
+        [SerializeField] private float attackAnimForwardDistance = 0.25f;
+        [SerializeField] private float attackAnimMoveTime = 0.2f;
 
+      
         public PathfindingAgent Agent { get; private set; }
         public GameObject GameObject => gameObject;
         public GameObject Owner => gameObject;
@@ -33,10 +38,24 @@ namespace Game.Unit
             Agent = GetComponent<PathfindingAgent>();
         }
 
+        public int CurrentHealth
+        {
+            get
+            {
+                return _currentHealth;
+            }
+            set
+            {
+                _currentHealth = value;
+                OnHealthChange?.Invoke(_currentHealth);
+
+            }
+        }
+
         public void TakeDamage(int Damage)
         {
-            currentHealth -= Damage;
-            if (currentHealth <= 0)
+            CurrentHealth -= Damage;
+            if (CurrentHealth <= 0)
             {
                 KillUnit();
             }
@@ -53,12 +72,18 @@ namespace Game.Unit
             onSelect.Invoke();
             _marker = selectionMarker;
             _marker.AttachTo(transform, Vector3.zero, transform.localScale);
+
+            _currentStrategy = new UnitUIInfo(this);
+            ServiceLocator.Get<InfoController>().SelectEntity(_currentStrategy);
         }
 
         public void Deselect()
         {
             onDeselect.Invoke();
             if (_marker) _marker.Detach();
+
+
+            ServiceLocator.Get<InfoController>().DeselectEntity(_currentStrategy);
         }
 
         public abstract void Command(Vector3 position);
@@ -94,16 +119,14 @@ namespace Game.Unit
         /// <param name="args"></param>
         public void UpdateArgs(params object[] args)
         {
-            _unitData = (UnitData)args[0];
+            Data = (UnitData)args[0];
             transform.position = (Vector3)args[1];
-            currentHealth = _unitData.health;
-            rankSpriteRenderer.sprite = _unitData.rankVisual;
-            _stateManager = new StateManager(this, _unitData);
+            CurrentHealth = Data.health;
+            rankSpriteRenderer.sprite = Data.rankVisual;
+            _stateManager = new StateManager(this, Data);
 
         }
-        [SerializeField] private float forwardDistance = 0.25f;  // How far to move forward
-        [SerializeField] private float moveTime = 0.2f;         // How long it takes to move forward/back
-        [SerializeField] private float pauseTime = 0.1f;        // Optional pause at max distance
+
         public void AnimateAttack(Action onAnimationComplete)
         {
             // 1) Grab current position for reference
@@ -112,15 +135,15 @@ namespace Game.Unit
             // 2) Decide "forward" direction
             // In 2D, you might do "transform.up" or "transform.right"; in 3D, maybe "transform.forward"
             // For a simple 2D example, let's use "transform.up"
-            Vector3 forwardPos = originalPos + (unitVisual.up * forwardDistance);
+            Vector3 forwardPos = originalPos + (unitVisual.up * attackAnimForwardDistance);
 
             Sequence attackSeq = DOTween.Sequence();
             attackSeq.Append(
-                unitVisual.DOLocalMove(forwardPos, moveTime).SetEase(Ease.OutQuad)
+                unitVisual.DOLocalMove(forwardPos, attackAnimMoveTime).SetEase(Ease.OutQuad)
                 );
             attackSeq.AppendCallback(() => onAnimationComplete?.Invoke());
             attackSeq.Append(
-                unitVisual.DOLocalMove(originalPos, moveTime).SetEase(Ease.InQuad)
+                unitVisual.DOLocalMove(originalPos, attackAnimMoveTime).SetEase(Ease.InQuad)
    );
         }
 

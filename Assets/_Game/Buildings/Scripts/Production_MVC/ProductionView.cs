@@ -13,16 +13,10 @@ public class ProductionView : MonoBehaviour
         _productionController = buildingController;
 
     }
-    public void CreateBuildingButtons(BuildingData[] buildings)
+
+    public void PopulateUI(UIStrategyBase strategy)
     {
-        InfiniteScrollUI.SetUIData(new BuildingUIStrategy(_productionController, buildings));
-
-    }
-
-    public void CreateSoldierButtons(UnitData[] units)
-    {
-        InfiniteScrollUI.SetUIData(new UnitUIStrategy(_productionController, units));
-
+        InfiniteScrollUI.SetUIData(strategy);
     }
     public void SelectBuildingTab()
     {

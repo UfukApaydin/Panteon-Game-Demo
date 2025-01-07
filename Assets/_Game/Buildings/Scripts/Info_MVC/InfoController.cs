@@ -1,4 +1,8 @@
 using Game.Unit;
+using SelectionSystem;
+using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 public class InfoController
 {
@@ -10,31 +14,39 @@ public class InfoController
         _view = view;
         _view.Init(this);
     }
-    public void SelectBuilding(BuildingBase newBuilding)
+
+    InfoUIStrategyBase currentStrategy = null;
+    public void SelectEntity(InfoUIStrategyBase data)
     {
-        if (_currentBuilding != null)
+        UnsubscribeFromOldStrategy();
+
+         currentStrategy = data;
+        _view.UpdateView(currentStrategy);
+        if (currentStrategy != null && currentStrategy.TryGetAttackable(out IAttackable attackable))
         {
-            _currentBuilding.OnHealthChange -= _view.UpdateHealthChange;
+            attackable.OnHealthChange += _view.UpdateHealthChange;
+            _view.UpdateHealthChange(currentStrategy.CurrentHealth);
         }
 
-        _currentBuilding = newBuilding;
-        _view.UpdateView(_currentBuilding.Data);
-        if (_currentBuilding != null)
+        void UnsubscribeFromOldStrategy()
         {
-            _currentBuilding.OnHealthChange += _view.UpdateHealthChange;
-            _view.UpdateHealthChange(_currentBuilding.CurrentHealth);
+            if (currentStrategy != null && currentStrategy.TryGetAttackable(out IAttackable attackable))
+            {
+                attackable.OnHealthChange -= _view.UpdateHealthChange;
+            }
+
         }
     }
-    public void DeselectBuilding(BuildingBase building)
+    public void DeselectEntity(InfoUIStrategyBase data)
     {
-        if (_currentBuilding != null && _currentBuilding == building)
+        if (currentStrategy != null && currentStrategy == data)
         {
             _view.ResetView();
         }
     }
-    public void StartProduction(UnitData unitData)
-    {
-        if (_currentBuilding != null)
-            _currentBuilding.Produce(unitData);
-    }
+
 }
+
+
+
+

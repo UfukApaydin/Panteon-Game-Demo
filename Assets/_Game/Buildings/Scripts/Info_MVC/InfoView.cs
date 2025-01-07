@@ -14,30 +14,27 @@ public class InfoView : MonoBehaviour
     public InfoImage infoImagePrefab;
 
     private InfoController _controller;
-    private BuildingData _buildingData;
+    private List<UnitData> productionList = new();
     private List<InfoImage> infoImages = new();
+
     public void Init(InfoController productionController)
     {
         _controller = productionController;
     }
 
-    public void UpdateView(BuildingData buildingData)
+    public void UpdateView(InfoUIStrategyBase strategy)
     {
-        _buildingData = buildingData;
 
-        buildingImage.texture = _buildingData.icon;
-        buildingNameText.text = _buildingData.name;
-
+        buildingImage.texture = strategy.Icon;
+        buildingNameText.text = strategy.Name;
+        productionList = strategy.GetProductionData;
         PopulateProductionUI();
     }
     public void ResetView()
     {
-        _buildingData = null;
-
-
+        productionList?.Clear();
         buildingImage.texture = null;
         buildingNameText.text = string.Empty;
-
         PopulateProductionUI();
 
     }
@@ -52,15 +49,16 @@ public class InfoView : MonoBehaviour
             infoImages.Clear();
         }
 
-        if (_buildingData != null)
+        if (productionList == null)
+            return;
+
+        foreach (UnitData unitData in productionList)
         {
-            foreach (UnitData unitData in _buildingData.unitDatas)
-            {
-                InfoImage infoImage = Instantiate(infoImagePrefab, buttonContainer);
-                infoImage.PopulateUI(unitData.icon, unitData.name);
-                infoImages.Add(infoImage);
-            }
+            InfoImage infoImage = Instantiate(infoImagePrefab, buttonContainer);
+            infoImage.PopulateUI(unitData.icon, unitData.name);
+            infoImages.Add(infoImage);
         }
+
 
     }
 

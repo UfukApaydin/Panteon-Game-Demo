@@ -15,7 +15,7 @@ public class ProductionController : MonoBehaviour
     private BuildingData _selectedBuilding = null;
     private GameObject _previewInstance;
     private Vector3 _buildingOffset;
-
+    private UIStrategyBase _activeStrategy;
     private FactoryManager factoryManager => ServiceLocator.Get<FactoryManager>();
 
     private void OnDestroy()
@@ -42,11 +42,13 @@ public class ProductionController : MonoBehaviour
 
     public void RequestBuildingData()
     {
-        productionView.CreateBuildingButtons(productionModel.buildingConfigs.ToArray());
+        _activeStrategy = new BuildingUIStrategy(this, productionModel.buildingConfigs.ToArray());
+        productionView.PopulateUI(_activeStrategy);
     }
     public void RequestSoldierData()
     {
-        productionView.CreateSoldierButtons(produceableUnits.ToArray());
+        _activeStrategy = new UnitUIStrategy(this, produceableUnits.ToArray());
+        productionView.PopulateUI(_activeStrategy);
     }
 
     #region Building Production
@@ -139,7 +141,7 @@ public class ProductionController : MonoBehaviour
     public void ProduceSoldier(UnitData unitData)
     {
         unitData.BuildUnitGlobally?.Invoke(unitData);
-        Debug.Log($"{unitData.dataName} : produced");
+      
     }
     private List<UnitData> produceableUnits = new();
 
@@ -151,7 +153,7 @@ public class ProductionController : MonoBehaviour
     {
         RemoveProduceableUnitRange(buildingData.unitDatas);
     }
-    public void RegisterProduceableUnit(UnitData unitData)
+    private void RegisterProduceableUnit(UnitData unitData)
     {
         if (produceableUnits.Contains(unitData))
             return;
@@ -163,8 +165,12 @@ public class ProductionController : MonoBehaviour
         {
             RegisterProduceableUnit(unitData);
         }
+        if(_activeStrategy != null && _activeStrategy is UnitUIStrategy)
+        {
+            RequestSoldierData();
+        }
     }
-    public void RemoveProduceableUnit(UnitData unitData)
+    private void RemoveProduceableUnit(UnitData unitData)
     {
         if (produceableUnits.Contains(unitData))
             produceableUnits.Remove(unitData);
@@ -174,6 +180,10 @@ public class ProductionController : MonoBehaviour
         foreach (var unitData in unitDatas)
         {
             RemoveProduceableUnit(unitData);
+        }
+        if (_activeStrategy != null && _activeStrategy is UnitUIStrategy)
+        {
+            RequestSoldierData();
         }
     }
     #endregion
