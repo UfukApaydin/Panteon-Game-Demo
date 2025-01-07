@@ -40,7 +40,6 @@ public class GameInitiator : MonoBehaviour
     private void Init()
     {
         ServiceLocator.Register(new FactoryManager().InitializeFactories());
-        ServiceLocator.Register(new GridManager(gridConfig));
         ServiceLocator.Register(new PathfindingDirector()
             .InitializePathfinding(gridConfig));
         ServiceLocator.Register(new ProductionController.Builder()
