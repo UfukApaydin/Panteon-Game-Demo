@@ -1,4 +1,4 @@
-using System.Linq;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class InstancedSpriteRenderer : MonoBehaviour
@@ -6,59 +6,66 @@ public class InstancedSpriteRenderer : MonoBehaviour
     public Material instancedMaterial;
     public Texture2D spriteTexture;
 
-    public int instanceCount = 1000;
-    public Vector3[] positions;
-    public Vector4[] colors;
-
-    private Matrix4x4[] transforms;
+    public List<Matrix4x4> transforms = new List<Matrix4x4>();
+    public List<Vector4> colors = new List<Vector4>();
     private MaterialPropertyBlock propertyBlock;
+
+    private int soldierCount;
 
     void Start()
     {
-        // Assign the texture to the material
         instancedMaterial.SetTexture("_MainTex", spriteTexture);
-
-        // Initialize positions and colors
-        positions = new Vector3[instanceCount];
-        colors = new Vector4[instanceCount];
-        transforms = new Matrix4x4[instanceCount];
         propertyBlock = new MaterialPropertyBlock();
 
-        for (int i = 0; i < instanceCount; i++)
-        {
-            positions[i] = Random.insideUnitSphere * 10f;
-            colors[i] = new Color(Random.value, Random.value, Random.value, 1.0f);
+        InitializeSoldiers(5);
+    }
 
-            // Create instance transform
-            Matrix4x4 transform = Matrix4x4.TRS(
-                positions[i],
-                Quaternion.identity,
-                Vector3.one * 0.5f
-            );
-            transforms[i] = transform;
+    public void InitializeSoldiers(int count)
+    {
+        soldierCount = count;
+        transforms = new List<Matrix4x4>(count);
+        colors = new List<Vector4>(count);
+
+        for (int i = 0; i < count; i++)
+        {
+            transforms.Add(Matrix4x4.identity);
+            colors.Add(new Vector4(1, 1, 1, 1)); // Default white color
         }
+    }
+
+    public void UpdateSoldierTransform(int index, Vector3 position, Quaternion rotation, Vector3 scale)
+    {
+        if (index < 0 || index >= soldierCount) return;
+
+        transforms[index] = Matrix4x4.TRS(position, rotation, scale);
+    }
+
+    public void UpdateSoldierColor(int index, Color color)
+    {
+        if (index < 0 || index >= soldierCount) return;
+
+        colors[index] = color;
     }
 
     void Update()
     {
         // Update GPU instance data
-        for (int i = 0; i < instanceCount; i++)
-        {
-            propertyBlock.SetVectorArray("_InstanceColor", colors);
-            propertyBlock.SetMatrixArray("_InstanceTransform", transforms);
-        }
+        propertyBlock.SetMatrixArray("_InstanceTransform", transforms.ToArray());
+        propertyBlock.SetVectorArray("_InstanceColor", colors.ToArray());
 
         // Render instances
         Graphics.DrawMeshInstanced(
-            MeshGenerator.Quad(), // A simple quad mesh
+            MeshGenerator.Quad(),
             0,
             instancedMaterial,
-            transforms,
-            instanceCount,
+            transforms.ToArray(),
+            transforms.Count,
             propertyBlock
         );
     }
+
 }
+
 public static class MeshGenerator
 {
     public static Mesh Quad()

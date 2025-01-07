@@ -1,25 +1,23 @@
-using System.Threading.Tasks;
-using UnityEngine;
 using Game.Unit;
 using ObjectPoolSystem;
 public class UnitFactory : BaseFactory<UnitBase>
-{/// <summary>
-///  0 - PoolSystem
-///  1 - UnitData
-///  2 - Vector3 spawnPosition
-/// </summary>
-/// <param name="args"></param>
-/// <returns></returns>
+{
+
+    private PoolManager poolManager => ServiceLocator.Get<PoolManager>();
+    /// <summary>
+    ///  1 - UnitData
+    ///  2 - Vector3 spawnPosition
+    /// </summary>
+    /// <param name="args"></param>
+    /// <returns></returns>
     public override UnitBase Create(params object[] args)
     {
-        PoolSystem poolSystem =args[0].VerifyType<PoolSystem>();
-        UnitData config = args[1].VerifyType<UnitData>();
+        UnitData config = args[0].VerifyType<UnitData>();
 
-        poolSystem.Init();
-        IPoolable poolableObj = poolSystem.Get();
-        poolableObj.UpdateArgs(config, args[2]);
+        IPoolable poolableObj = poolManager.GetObject(GameManager.Instance.gameData.soldierType);
+        poolableObj.UpdateArgs(config, args[1]);
         return poolableObj.GameObject.GetComponent<UnitBase>();
     }
 
-    
+
 }

@@ -40,7 +40,7 @@ public abstract class BuildingBase : MonoBehaviour, IAttackable
         originNode = node;
         transform.position = node.worldPosition + Data.CenterOffset;
         UpdateGridCells(node, false);
-        _waypoint = Data.canProduceUnit ? new(Data.waypointPool, transform.position, transform.position) : null;
+        _waypoint = Data.canProduceUnit ? new( transform.position, transform.position) : null;
         ConstructBuilding();
     }
 
@@ -98,7 +98,7 @@ public abstract class BuildingBase : MonoBehaviour, IAttackable
 
     public void Command(Vector3 position)
     {
-     //   _waypoint?.MoveWaypoint(ServiceLocator.Get<GridManager>().GetSnapPosition(position));
+     
         _waypoint?.MoveWaypoint(ServiceLocator.Get<PathfindingDirector>().grid.NodeFromWorldPoint(position).worldPosition);
     }
 
@@ -118,6 +118,7 @@ public abstract class BuildingBase : MonoBehaviour, IAttackable
     {
         _waypoint?.DeactivateWaypoint();
         UpdateGridCells(originNode, true);
+        Deselect();
         DestroyBuilding();
     }
 

@@ -34,7 +34,7 @@ public static class ServiceLocator
         {
             return (T)service;
         }
-
+        Debug.LogError("Service cannot found");
         throw new Exception($"Service of type {type} is not registered.");
     }
 

@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0dfe528b3b817ae46899201ee001d71c, type: 3}
+  m_Name: GameData
+  m_EditorClassIdentifier: 
+  gridConfig: {fileID: 11400000, guid: b449123f9dbb9754f96fb2bac658370c, type: 2}
+  buildSystemConfig: {fileID: 11400000, guid: 2f760ffd4bd9cc74e910453b41df844a, type: 2}
+  markerType: {fileID: 11400000, guid: cc3af42c8d2db9b47b1c2f5d070db31f, type: 2}
+  waypointType: {fileID: 11400000, guid: ae9fcca43277e454ca226ea7340263a5, type: 2}
+  soldierType: {fileID: 11400000, guid: c1ffba68dcba4cc4bab3cfaf80e7ad57, type: 2}

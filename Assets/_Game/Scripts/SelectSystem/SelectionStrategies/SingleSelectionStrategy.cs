@@ -7,22 +7,21 @@ namespace SelectionSystem
     {
         public void Select(SelectionManager selectionManager)
         {
-            if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
-            {
-                return;
-            }
             selectionManager.ClearSelection();
-
-            RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
-          
-            
-            if (hit.collider != null)
+      
+            if(MouseTools.GetMousePosition(out RaycastHit2D hit))
             {
-                if (hit.collider.TryGetComponent<ISelectable>(out var selectable))
+                if (hit.collider != null)
                 {
-                    selectionManager.AddToSelection(selectable);
+                    //   DebugManager.instance.PrintLog($"{hit.transform.name} : selected");
+                    if (hit.collider.TryGetComponent<ISelectable>(out var selectable))
+                    {
+                        selectionManager.AddToSelection(selectable);
+                    }
                 }
             }
+         
         }
     }
 }
+

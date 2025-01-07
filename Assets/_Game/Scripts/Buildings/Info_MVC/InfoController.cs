@@ -41,6 +41,8 @@ public class InfoController
     {
         if (currentStrategy != null && currentStrategy == data)
         {
+          if(  currentStrategy.TryGetAttackable(out IAttackable attackable))
+                attackable.OnHealthChange -= _view.UpdateHealthChange;
             _view.ResetView();
         }
     }

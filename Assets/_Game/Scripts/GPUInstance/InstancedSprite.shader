@@ -1,4 +1,4 @@
-Shader "Custom/InstancedSprite"
+Shader "Custom/Instanced2DSprite"
 {
     Properties
     {
@@ -27,8 +27,7 @@ Shader "Custom/InstancedSprite"
             {
                 float4 vertex : POSITION;
                 float2 uv : TEXCOORD0;
-
-                UNITY_VERTEX_INPUT_INSTANCE_ID
+                uint instanceID : SV_InstanceID;
             };
 
             struct v2f
@@ -39,7 +38,6 @@ Shader "Custom/InstancedSprite"
 
             sampler2D _MainTex;
 
-            // Declare instanced properties explicitly
             UNITY_INSTANCING_BUFFER_START(Props)
                 float4 _InstanceColor;          // Per-instance color
                 float4x4 _InstanceTransform;   // Per-instance transformation
@@ -49,11 +47,11 @@ Shader "Custom/InstancedSprite"
             {
                 v2f o;
 
-                // Set up instancing ID
-                UNITY_SETUP_INSTANCE_ID(v);
+                // Access per-instance transformation
+                float4x4 instanceTransform = UNITY_ACCESS_INSTANCED_PROP(Props, _InstanceTransform);
 
-                // Apply instanced transformation
-                float4 worldPos = mul(UNITY_ACCESS_INSTANCED_PROP(Props, _InstanceTransform), float4(v.vertex.xy, 0.0, 1.0));
+                // Apply transformation to vertex
+                float4 worldPos = mul(instanceTransform, float4(v.vertex.xy, 0.0, 1.0));
                 o.vertex = UnityObjectToClipPos(worldPos);
 
                 o.uv = v.uv;
@@ -62,11 +60,8 @@ Shader "Custom/InstancedSprite"
 
             fixed4 frag(v2f i) : SV_Target
             {
-                // Set up instancing ID
-                UNITY_SETUP_INSTANCE_ID(i);
-
-                // Get instance color and multiply with texture
-                fixed4 col = tex2D(_MainTex, i.uv) * UNITY_ACCESS_INSTANCED_PROP(Props, _InstanceColor);
+                fixed4 col = tex2D(_MainTex, i.uv);
+                col *= UNITY_ACCESS_INSTANCED_PROP(Props, _InstanceColor); // Apply per-instance color
                 return col;
             }
             ENDCG

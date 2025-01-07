@@ -19,14 +19,6 @@ namespace AStarPathfinding
         {
             _isMoving = false;   
         }
-        //private void OnDestroy()
-        //{
-        //    ResetOccupyNode();
-        //}
-        //private void OnDisable()
-        //{
-        //    ResetOccupyNode();
-        //}
         public void MoveToPosition(Vector3 targetPosition)
         {
             target = targetPosition;

@@ -5,33 +5,29 @@ public class Waypoint
 {
     private Vector3 _parentPosition;
     private Vector3 _position;
-    private readonly PoolSystem _waypointPool;
+    private PoolManager poolManager => ServiceLocator.Get<PoolManager>();
     private IPoolable _waypointObj;
   
-    public Waypoint(PoolSystem waypointPool, Vector3 parentPosition, Vector3 position)
+    public Waypoint(Vector3 parentPosition, Vector3 position)
     {
-        _waypointPool = waypointPool;
+
         _parentPosition = parentPosition;
         _position = position;
 
-        Init();
-    }
-    private void Init()
-    {
-        _waypointPool.Init();
+
     }
     public void ActivateWaypoint()
     {
         if ( _waypointObj != null)
             return;
-        _waypointObj = _waypointPool.Get();
+        _waypointObj = poolManager.GetObject(GameManager.Instance.gameData.waypointType);
         MoveWaypoint(_position);
     }
     public void DeactivateWaypoint()
     {
         if (_waypointObj != null)
         {
-            _waypointPool.Return(_waypointObj);
+            poolManager.ReturnObject(GameManager.Instance.gameData.waypointType, _waypointObj);
             _waypointObj = null;
         }
        

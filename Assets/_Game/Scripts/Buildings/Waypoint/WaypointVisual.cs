@@ -6,12 +6,11 @@ public class WaypointVisual : MonoBehaviour, IPoolable
 
     public GameObject GameObject => gameObject;
 
-    PoolSystem _poolSystem;
     LineRenderer _lineRenderer;
 
-    public void Init(PoolSystem poolSystem)
+    public void Init()
     {
-        _poolSystem = poolSystem;
+
         _lineRenderer = GetComponent<LineRenderer>();
 
     }

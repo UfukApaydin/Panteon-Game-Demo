@@ -1,10 +1,8 @@
 using AStarPathfinding;
 using Game.Unit;
-using GridSystem;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class ProductionController : MonoBehaviour
 {
@@ -68,33 +66,31 @@ public class ProductionController : MonoBehaviour
 
     private void Update()
     {
-        if (_selectedBuilding != null && _previewInstance != null)
+        UpdatePlacementPosition();
+    }
+    private void UpdatePlacementPosition()
+    {
+        if (_selectedBuilding == null || _previewInstance == null)
+            return;
+
+        if (MouseTools.GetMousePosition(out RaycastHit2D hit, buildSystemConfig.groundLayerMask))
         {
-            if (GetMousePosition(out Vector3 mousePosition))
+            if (hit.collider != null)
             {
-                if (UpdatePreviewInstance(mousePosition))
+                _previewInstance.SetActive(true);
+                if (UpdatePreviewInstance(hit.point))
                 {
-                    HandleBuildingPlacement(mousePosition);
+                    HandleBuildingPlacement(hit.point);
                 }
 
-
+            
             }
-
         }
-    }
-    private bool GetMousePosition(out Vector3 position)
-    {
-        Vector3 mouseWorldPos = _mainCamera.ScreenToWorldPoint(Input.mousePosition);
-        Vector2 mouseWorldPos2D = new Vector2(mouseWorldPos.x, mouseWorldPos.y);
-
-        RaycastHit2D hit = Physics2D.Raycast(mouseWorldPos2D, Vector2.zero, 0f, buildSystemConfig.groundLayerMask);
-        if (hit.collider != null)
+        else
         {
-            position = SnapToGrid(hit.point);
-            return true;
+            _previewInstance.SetActive(false);
         }
-        position = Vector3.zero;
-        return false;
+
     }
     private bool UpdatePreviewInstance(Vector3 position)
     {
@@ -119,15 +115,25 @@ public class ProductionController : MonoBehaviour
         {
             PlaceBuilding(position);
         }
-
+        if (Input.GetMouseButtonDown(1))
+        {
+            ResetBuildingPlacement();
+        }
     }
     private void PlaceBuilding(Vector3 position)
     {
 
         factoryManager.Create<BuildingBase>(new[] { _selectedBuilding })
              .Build(ServiceLocator.Get<PathfindingDirector>().grid.NodeFromWorldPoint(position));
-        Destroy(_previewInstance);
-        _previewInstance = null;
+        ResetBuildingPlacement();
+    }
+    private void ResetBuildingPlacement()
+    {
+        if (_previewInstance != null)
+        {
+            Destroy(_previewInstance);
+            _previewInstance = null;
+        }
         _selectedBuilding = null;
     }
     public Vector3 SnapToGrid(Vector3 position)
@@ -144,7 +150,7 @@ public class ProductionController : MonoBehaviour
     public void ProduceSoldier(UnitData unitData)
     {
         unitData.BuildUnitGlobally?.Invoke(unitData);
-      
+
     }
     private List<UnitData> produceableUnits = new();
 
@@ -168,7 +174,7 @@ public class ProductionController : MonoBehaviour
         {
             RegisterProduceableUnit(unitData);
         }
-        if(_activeStrategy != null && _activeStrategy is UnitUIStrategy)
+        if (_activeStrategy != null && _activeStrategy is UnitUIStrategy)
         {
             RequestSoldierData();
         }

@@ -1,6 +1,5 @@
 using ObjectPoolSystem;
 using SelectionSystem.Marker;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,28 +10,13 @@ namespace SelectionSystem
         private List<ISelectable> _selectedObjects = new();
         private ISelectionStrategy _selectionStrategy;
 
-        [SerializeReference] private PoolSystem _selectionMarkerPool;
-        [SerializeField] private RectangleDrawer _rectangleDrawer;
-
-        private void Start()
+        private void Awake()
         {
-            InitPool();
+            ServiceLocator.Register<SelectionManager>(this);
         }
         void Update()
         {
             ExecuteSelection();
-        }
-        private void InitPool()
-        {
-            if (_selectionMarkerPool == null)
-            {
-
-                throw new InvalidOperationException("SelectionMarkerPool cannot be null");
-            }
-            else
-            {
-                _selectionMarkerPool.Init();
-            }
         }
         private void ExecuteSelection()
         {
@@ -49,17 +33,17 @@ namespace SelectionSystem
                 _selectionStrategy.Select(this);
             }
 
-            if (Input.GetMouseButtonDown(0) && Input.GetKey(KeyCode.LeftAlt)) // Drag box start
-            {
-
-                _selectionStrategy = new RectangleSelectionStrategy(_rectangleDrawer);
-                //       _selectionStrategy = new RectangleSelectionStrategy();
-                _selectionStrategy.Select(this);
-            }
-
             if (Input.GetMouseButtonDown(1)) // Right-click
             {
                 ExecuteCommand();
+            }
+
+        }
+        public void RemoveFromSelection(ISelectable selectable)
+        {
+            if (_selectedObjects.Contains(selectable))
+            {
+                _selectedObjects.Remove(selectable);
             }
 
         }
@@ -75,10 +59,10 @@ namespace SelectionSystem
         public void AddToSelection(ISelectable selectable)
         {
             if (!_selectedObjects.Contains(selectable))
-
             {
                 _selectedObjects.Add(selectable);
-                selectable.Select(_selectionMarkerPool.Get() as SelectionMarker);
+                var marker = ServiceLocator.Get<PoolManager>().GetObject(GameManager.Instance.gameData.markerType);
+                selectable.Select(marker as SelectionMarker);
             }
         }
 
@@ -87,16 +71,19 @@ namespace SelectionSystem
         private void ExecuteCommand()
         {
 
-            RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
-            Vector3 targetPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
-            ICommandStrategy command = hit.collider != null && hit.collider.GetComponent<ISelectable>() != null
-                ? new AttackCommand()
-                : new MoveCommand();
-
-            foreach (var obj in _selectedObjects)
+            if (MouseTools.GetMousePosition(out RaycastHit2D hit))
             {
-                command.Execute(obj, hit, targetPoint);
+                if (hit.collider != null)
+                {
+                    ICommandStrategy command = hit.collider != null && hit.collider.GetComponent<ISelectable>() != null
+                    ? new AttackCommand()
+                    : new MoveCommand();
+
+                    foreach (var obj in _selectedObjects)
+                    {
+                        command.Execute(obj, hit, hit.point);
+                    }
+                }
             }
         }
     }
@@ -113,7 +100,7 @@ namespace SelectionSystem
         {
             if (hit.collider != null && hit.collider.TryGetComponent<IAttackable>(out var target))
             {
-              
+
                 if (source is IAttacker)
                     (source as IAttacker).Attack(target);
             }

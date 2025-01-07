@@ -7,14 +7,13 @@ namespace SelectionSystem.Marker
     {
         private Transform _target; 
         private Vector3 _offset;
-        private PoolSystem _selectionMarkerPool;
         private SpriteRenderer _spriteRenderer;
 
         public GameObject GameObject => gameObject;
-
-        public void Init(PoolSystem poolSystem)
+        private PoolManager poolManager => ServiceLocator.Get<PoolManager>();
+        public void Init()
         {
-            _selectionMarkerPool = poolSystem;
+           
             _spriteRenderer = GetComponent<SpriteRenderer>();
         }
         public void AttachTo(Transform target , Vector3 offset, Vector2 size)
@@ -27,7 +26,7 @@ namespace SelectionSystem.Marker
         public void Detach()
         {
             _target = null;
-            _selectionMarkerPool.Return(this);
+            poolManager.ReturnObject(GameManager.Instance.gameData.markerType, this);
         
         }
 

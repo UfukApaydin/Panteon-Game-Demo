@@ -13,22 +13,23 @@ namespace Game.Unit
     {
         public UnityEvent onSelect;
         public UnityEvent onDeselect;
-        public Action<int> OnHealthChange { get;  set; }
-        public Transform unitVisual;
-        public SpriteRenderer rankSpriteRenderer;
+        public Action<int> OnHealthChange { get; set; }
+
+        public SpriteRenderer unitVisual;
         public UnitData Data { get; private set; }
 
         protected StateManager _stateManager;
 
-        private PoolSystem _poolSystem;
+
         private SelectionMarker _marker;
         private int _currentHealth;
         private UnitUIInfo _currentStrategy;
         [SerializeField] private float attackAnimForwardDistance = 0.25f;
         [SerializeField] private float attackAnimMoveTime = 0.2f;
 
-      
+
         public PathfindingAgent Agent { get; private set; }
+        private PoolManager poolManager => ServiceLocator.Get<PoolManager>();
         public GameObject GameObject => gameObject;
         public GameObject Owner => gameObject;
         public Vector2 Objectsize => Vector2.one;
@@ -62,8 +63,10 @@ namespace Game.Unit
         }
         public void KillUnit()
         {
+            ServiceLocator.Get<SelectionManager>().RemoveFromSelection(this);
             Agent.ResetOccupyNode();
-            _poolSystem.Return(this);
+            poolManager.ReturnObject(GameManager.Instance.gameData.soldierType, this);
+            Deselect();
         }
 
         #region Commands
@@ -81,8 +84,6 @@ namespace Game.Unit
         {
             onDeselect.Invoke();
             if (_marker) _marker.Detach();
-
-
             ServiceLocator.Get<InfoController>().DeselectEntity(_currentStrategy);
         }
 
@@ -97,9 +98,9 @@ namespace Game.Unit
         }
         #endregion
         #region Pool Methods
-        public void Init(PoolSystem poolSystem)
+        public void Init()
         {
-            _poolSystem = poolSystem;
+
         }
 
         public void Activate()
@@ -110,7 +111,7 @@ namespace Game.Unit
         public void Deactivate()
         {
             gameObject.SetActive(false);
-            gameObject.transform.position = Vector3.one * -100;
+        
         }
         /// <summary>
         /// 0 - UnitData
@@ -122,7 +123,7 @@ namespace Game.Unit
             Data = (UnitData)args[0];
             transform.position = (Vector3)args[1];
             CurrentHealth = Data.health;
-            rankSpriteRenderer.sprite = Data.rankVisual;
+            unitVisual.sprite = Data.GetSpriteFromAtlas();
             _stateManager = new StateManager(this, Data);
 
         }
@@ -130,20 +131,20 @@ namespace Game.Unit
         public void AnimateAttack(Action onAnimationComplete)
         {
             // 1) Grab current position for reference
-            Vector3 originalPos = unitVisual.localPosition;
+            Vector3 originalPos = unitVisual.transform.localPosition;
 
             // 2) Decide "forward" direction
             // In 2D, you might do "transform.up" or "transform.right"; in 3D, maybe "transform.forward"
             // For a simple 2D example, let's use "transform.up"
-            Vector3 forwardPos = originalPos + (unitVisual.up * attackAnimForwardDistance);
+            Vector3 forwardPos = originalPos + (unitVisual.transform.up * attackAnimForwardDistance);
 
             Sequence attackSeq = DOTween.Sequence();
             attackSeq.Append(
-                unitVisual.DOLocalMove(forwardPos, attackAnimMoveTime).SetEase(Ease.OutQuad)
+                unitVisual.transform.DOLocalMove(forwardPos, attackAnimMoveTime).SetEase(Ease.OutQuad)
                 );
             attackSeq.AppendCallback(() => onAnimationComplete?.Invoke());
             attackSeq.Append(
-                unitVisual.DOLocalMove(originalPos, attackAnimMoveTime).SetEase(Ease.InQuad)
+                unitVisual.transform.DOLocalMove(originalPos, attackAnimMoveTime).SetEase(Ease.InQuad)
    );
         }
 

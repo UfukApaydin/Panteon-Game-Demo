@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class InfoView : MonoBehaviour
 {
+    public GameObject infoPanel;
     public RawImage buildingImage;
     public TMP_Text healthText;
     public TMP_Text buildingNameText;
@@ -24,7 +25,7 @@ public class InfoView : MonoBehaviour
 
     public void UpdateView(InfoUIStrategyBase strategy)
     {
-
+        infoPanel.SetActive(true);
         buildingImage.texture = strategy.Icon;
         buildingNameText.text = strategy.Name;
         productionList = strategy.GetProductionData;
@@ -36,7 +37,7 @@ public class InfoView : MonoBehaviour
         buildingImage.texture = null;
         buildingNameText.text = string.Empty;
         PopulateProductionUI();
-
+        infoPanel.SetActive(false);
     }
     private void PopulateProductionUI()
     {
