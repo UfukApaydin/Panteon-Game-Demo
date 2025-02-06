@@ -28,6 +28,7 @@ public class FactoryManager
     }
     public FactoryManager InitializeFactories()
     {
+        _factories.Clear();
         RegisterFactory(new BuildingFactory());
         RegisterFactory(new BuildingPreviewFactory());
         RegisterFactory(new UnitFactory());

@@ -7,7 +7,7 @@ public class Barracks : BuildingBase
 {
 
     private PathfindingGrid Grid => ServiceLocator.Get<PathfindingDirector>().grid;
-    // public UnitData buildingDatas;
+   
     private FactoryManager _factoryManager => ServiceLocator.Get<FactoryManager>();
     private ProductionController _buildingPlacementController => ServiceLocator.Get<ProductionController>();
 
@@ -17,7 +17,7 @@ public class Barracks : BuildingBase
         {
             unitData.BuildUnitGlobally += Produce;
         }
-        _buildingPlacementController.activeBuildings.RegisterBuilding/*<Barracks>*/(typeof(Barracks), this);
+        _buildingPlacementController.activeBuildings.RegisterBuilding(typeof(Barracks), this);
 
 
     }
@@ -27,7 +27,7 @@ public class Barracks : BuildingBase
         {
             unitData.BuildUnitGlobally -= Produce;
         }
-        _buildingPlacementController.activeBuildings.RemoveBuilding/*<Barracks>*/(typeof(Barracks), this);
+        _buildingPlacementController.activeBuildings.RemoveBuilding(typeof(Barracks), this);
         Destroy(gameObject);
     }
 

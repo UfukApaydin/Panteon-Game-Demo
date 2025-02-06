@@ -65,8 +65,15 @@ namespace Game.Unit
         {
             ServiceLocator.Get<SelectionManager>().RemoveFromSelection(this);
             Agent.ResetOccupyNode();
-            poolManager.ReturnObject(GameManager.Instance.gameData.soldierType, this);
+          
             Deselect();
+
+            // Clear References
+            _marker = null;
+            _currentStrategy = null;
+            OnHealthChange = null; // Avoid memory leaks from event subscriptions
+
+            poolManager.ReturnObject(GameManager.Instance.gameData.soldierType, this);
         }
 
         #region Commands

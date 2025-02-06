@@ -38,7 +38,8 @@ public class ActiveBuildings
         {
             Debug.Log($" {buildingBase.Data.dataName} ");
             onBuildingTypeRemoved?.Invoke(buildingBase.Data);
+            activeBuildings.Remove(type);
         }
-        activeBuildings.Remove(type);
+      
     }
 }

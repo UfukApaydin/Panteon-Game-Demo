@@ -102,7 +102,9 @@ public class InfiniteScrollUI : MonoBehaviour
                 (itemGO.transform as RectTransform).anchoredPosition = new Vector2(xPos, yPos);
 
                 itemGO.SetProduction(dataSource[dataIndex]);
-                currentStrategy.AddListener(itemGO.GetComponent<Button>(), dataIndex);
+                Button button = itemGO.GetComponent<Button>();
+                button.onClick.RemoveAllListeners();
+                currentStrategy.AddListener(button, dataIndex);
 
             }
             else
@@ -116,35 +118,32 @@ public class InfiniteScrollUI : MonoBehaviour
     }
     private void ConfigureUI()
     {
+        //  Fix: Destroy old objects before creating new ones
+        foreach (var item in pooledItems)
+        {
+            Destroy(item.gameObject);
+        }
+        pooledItems.Clear();
 
         int initialPoolCount = visibleRows * itemCountPerRow;
 
-
         for (int i = 0; i < initialPoolCount; i++)
         {
-            if (pooledItems.Count < initialPoolCount)
-            {
-                ProductionSlot itemGO = Instantiate(itemPrefab, contentArea);
-                pooledItems.Add(itemGO);
-            }
-            else
-            {
-                break;
-            }
+            ProductionSlot itemGO = Instantiate(itemPrefab, contentArea);
+            pooledItems.Add(itemGO);
         }
+
         totalRows = Mathf.CeilToInt((float)dataSource.Count / totalColumns);
         float contentHeight = totalRows * cellHeight;
         contentArea.sizeDelta = new Vector2(contentArea.sizeDelta.x, contentHeight);
-
-
-
     }
+
     UIStrategyBase currentStrategy;
     public void SetUIData(UIStrategyBase strategy)
     {
         currentStrategy = strategy;
-        dataSource.Clear();
-        dataSource = currentStrategy.Data.ToList();
+        dataSource = new List<Data>(currentStrategy.Data);
+       // dataSource = currentStrategy.Data.ToList();
 
         ConfigureUI();
         UpdateVisibleItems();

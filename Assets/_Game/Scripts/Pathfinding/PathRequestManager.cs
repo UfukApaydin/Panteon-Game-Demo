@@ -15,7 +15,13 @@ namespace AStarPathfinding
         private PathfindingGrid _grid;
         void Awake()
         {
-            instance = this;
+            if (instance == null)
+                instance = this;
+            else
+            {
+                Destroy(gameObject);
+                return;
+            }
         }
 
         void Update()
@@ -36,11 +42,16 @@ namespace AStarPathfinding
 
         public static void RequestPath(PathRequest request)
         {
-            ThreadStart threadStart = delegate
+            //ThreadStart threadStart = delegate
+            //{
+            //    instance._pathfinding.FindPath(request, instance.FinishedProcessingPath);
+            //};
+            //threadStart.Invoke();
+            Thread thread = new Thread(() =>
             {
                 instance._pathfinding.FindPath(request, instance.FinishedProcessingPath);
-            };
-            threadStart.Invoke();
+            });
+            thread.Start();
         }
 
         public void FinishedProcessingPath(PathResult result)

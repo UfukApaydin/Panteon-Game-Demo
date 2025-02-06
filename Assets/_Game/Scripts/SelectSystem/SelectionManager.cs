@@ -10,6 +10,9 @@ namespace SelectionSystem
         private List<ISelectable> _selectedObjects = new();
         private ISelectionStrategy _selectionStrategy;
 
+        private readonly ISelectionStrategy _singleSelection = new SingleSelectionStrategy();
+        private readonly ISelectionStrategy _multiSelection = new MultiSelectionStrategy();
+
         private void Awake()
         {
             ServiceLocator.Register<SelectionManager>(this);
@@ -24,11 +27,11 @@ namespace SelectionSystem
             {
                 if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
                 {
-                    _selectionStrategy = new MultiSelectionStrategy();
+                    _selectionStrategy = _multiSelection;
                 }
                 else
                 {
-                    _selectionStrategy = new SingleSelectionStrategy();
+                    _selectionStrategy = _singleSelection;
                 }
                 _selectionStrategy.Select(this);
             }
